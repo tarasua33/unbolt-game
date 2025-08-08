@@ -1,18 +1,19 @@
 import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { IGameObject } from "../libs/gameObjects/IGameObject";
-import { CubeFactory } from "./CubeFactory";
+import { DragDispatcher } from "../libs/utils/DragDispatcher";
+import { MainGroupFactory } from "./MainGroupFactory";
 
 export class GameUiObjectsFactory
 {
     private _factories = {
-        cubeFactory: new CubeFactory()
+        cubeFactory: new MainGroupFactory()
     }
 
-    public buildGameUIObjects(scene: IGameGroup): Record<string, IGameObject>
+    public buildGameUIObjects(scene: IGameGroup, drag: DragDispatcher): Record<string, IGameObject>
     {
         const {cubeFactory} = this._factories;
         const ui = {
-            cube: cubeFactory.buildUi(scene)
+            mainGroup: cubeFactory.buildUi({parent: scene, drag})
         }
 
         return ui;

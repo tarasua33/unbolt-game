@@ -2,6 +2,13 @@ import * as THREE from 'three';
 import { StandardScene } from './gameObjects/StandardScene';
 import { GameUiObjectsFactory } from '../factories/GameUiObjectsFactory';
 import { IGameObject } from './gameObjects/IGameObject';
+import { DragDispatcher } from './utils/DragDispatcher';
+
+interface IDispatchers
+{
+        drag: DragDispatcher;
+
+}
 
 export class Game {
     private _mainCamera: THREE.PerspectiveCamera;
@@ -13,7 +20,8 @@ export class Game {
         width: window.innerWidth,
         height: window.innerHeight,
     }
-    _mainCameraConfig = {
+
+    private _mainCameraConfig = {
         x: 0,
         y: 10,
         z: 10,
@@ -29,6 +37,8 @@ export class Game {
     }
 
     private _gameUI!: Record<string, IGameObject>;
+
+    private _dispatchers!: IDispatchers
 
     /**
      * @param {string} canvasName - ClassName or Id canvas dom
@@ -59,13 +69,29 @@ export class Game {
 
         this._clock = new THREE.Clock();
 
-        this._buildGameObjects();
+        // CREATE DISPATCHERS
+        const dispatchers = this._dispatchers = this._createDispatchers(renderer);
+
+        // CREATE UI ELEMENTS
+        this._buildGameObjects(scene, dispatchers);
+
+        // START DISPATCH EVENTS
+        dispatchers.drag.startDispatch();
     }
 
-    private _buildGameObjects(): void {
+    private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): void {
         const uiFactory = new GameUiObjectsFactory();
 
-        this._gameUI = uiFactory.buildGameUIObjects(this._scene);
+        this._gameUI = uiFactory.buildGameUIObjects(scene, dispatchers.drag);
+    }
+
+    private _createDispatchers(renderer: THREE.WebGLRenderer): IDispatchers
+    {
+        const result: IDispatchers = {
+            drag: new DragDispatcher(renderer)
+        }
+
+        return result
     }
 
     public update(): void {

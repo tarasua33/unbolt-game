@@ -2,12 +2,12 @@ import * as THREE from 'three';
 import { IGameObject } from './IGameObject';
 import { IGameGroup } from './IGameGroup';
 
-interface StandardGroupConfig {
+export interface StandardGroupConfig {
 }
 
 export class StandardGroup<T extends StandardGroupConfig = StandardGroupConfig> extends THREE.Group implements IGameGroup {
-    private _config: T;
-        private _gameObjects: IGameObject[] = [];
+    protected _config: T;
+    protected _gameObjects: IGameObject[] = [];
 
     constructor(config: T) {
         super();
@@ -19,16 +19,13 @@ export class StandardGroup<T extends StandardGroupConfig = StandardGroupConfig> 
         // pass
     }
 
-    public addObject(object: IGameObject): void
-    {
+    public addObject(object: IGameObject): void {
         this._gameObjects.push(object);
         this.add(object);
     }
 
-    public updateObject(dt: number): void
-    {
-        for (const child of this._gameObjects)
-        {
+    public updateObject(dt: number): void {
+        for (const child of this._gameObjects) {
             child.updateObject(dt)
         }
     }

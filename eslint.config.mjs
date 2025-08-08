@@ -33,6 +33,12 @@ export default [
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
       }],
+      '@typescript-eslint/explicit-member-accessibility': ['error', {
+        accessibility: 'explicit',
+        overrides: {
+          constructors: 'no-public',
+        },
+      }]
     },
   },
 ];

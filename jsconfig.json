@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "es2020",
+    "checkJs": true,
+    "moduleResolution": "node"
+  },
+  "include": ["./"],
+  "exclude": ["node_modules", "dist", "./eslint.config.mjs", "bundler"]
+}
