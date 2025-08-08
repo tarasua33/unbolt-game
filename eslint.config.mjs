@@ -1,0 +1,38 @@
+import js from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+
+const [tsConfig] = await tseslint.configs.recommendedTypeChecked;
+
+export default [
+  // JavaScript
+  {
+    files: ['**/*.{js,mjs}'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+    ...js.configs.recommended,
+  },
+
+  // TypeScript
+  {
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
+    ...tsConfig,
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
+    },
+  },
+];
