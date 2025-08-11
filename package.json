@@ -32,6 +32,7 @@
     "html-loader": "^5.1.0",
     "html-webpack-plugin": "^5.6.3",
     "ip": "^2.0.1",
+    "lil-gui": "^0.20.0",
     "mini-css-extract-plugin": "^2.9.3",
     "portfinder-sync": "^0.0.2",
     "raw-loader": "^4.0.2",
@@ -46,7 +47,7 @@
     "webpack-merge": "^6.0.1"
   },
   "dependencies": {
-    "mini-signals": "^2.0.0",
+    "mini-signals": "^1.2.0",
     "three": "^0.179.1"
   }
 }

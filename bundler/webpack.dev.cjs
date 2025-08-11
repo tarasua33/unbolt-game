@@ -19,10 +19,10 @@ module.exports = merge(commonConfiguration, {
         // https: false,
         allowedHosts: 'all',
         hot: true,
-        watchFiles: ['src/**', 'staticAssets/**'],
+        watchFiles: ['src/**', 'static/**'],
         static: {
             watch: true,
-            directory: path.join(__dirname, '../staticAssets'),
+            directory: path.join(__dirname, '../static'),
         },
         client: {
             logging: 'none',

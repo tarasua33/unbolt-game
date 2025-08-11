@@ -1,21 +1,29 @@
-import * as THREE from 'three';
 import { StandardScene } from './gameObjects/StandardScene';
 import { GameUiObjectsFactory } from '../factories/GameUiObjectsFactory';
 import { IGameObject } from './gameObjects/IGameObject';
 import { DragDispatcher } from './utils/DragDispatcher';
+import { AssetsLoader } from './utils/AssetsLoader';
+import { AmbientLight, Clock, DirectionalLight, PerspectiveCamera, WebGLRenderer } from "three";
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// import { StandardGroup } from './gameObjects/StandardGroup';
+// import * as dat from "lil-gui";
 
-interface IDispatchers
-{
-        drag: DragDispatcher;
+
+
+
+interface IDispatchers {
+    drag: DragDispatcher;
 
 }
 
 export class Game {
-    private _mainCamera: THREE.PerspectiveCamera;
+    private _mainCamera: PerspectiveCamera;
     private _canvas: HTMLCanvasElement;
-    private _clock = new THREE.Clock;
+    private _clock = new Clock;
     private _scene: StandardScene;
-    private _renderer: THREE.WebGLRenderer;
+    private _renderer: WebGLRenderer;
+    private _assetsLoader: AssetsLoader;
+
     private _sizes = {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -24,8 +32,8 @@ export class Game {
     private _mainCameraConfig = {
         x: 0,
         y: 10,
-        z: 10,
-        rotation: - Math.PI / 4,
+        z: 15,
+        rotation: - Math.PI / 5,
         mainCameraViewAngle: 75
     }
     private _lightConfig = {
@@ -36,7 +44,7 @@ export class Game {
         z: 0
     }
 
-    private _gameUI!: Record<string, IGameObject>;
+    private _gameUI!: Record<string, IGameObject | IGameObject[]>;
 
     private _dispatchers!: IDispatchers
 
@@ -49,44 +57,53 @@ export class Game {
 
         const sizes = this._sizes;
         const cameraConfig = this._mainCameraConfig;
-        const camera = this._mainCamera = new THREE.PerspectiveCamera(cameraConfig.mainCameraViewAngle, sizes.width / sizes.height);
+        const camera = this._mainCamera = new PerspectiveCamera(
+            cameraConfig.mainCameraViewAngle,
+            sizes.width / sizes.height);
         camera.position.set(cameraConfig.x, cameraConfig.y, cameraConfig.z)
         camera.rotation.x = cameraConfig.rotation;
-
         scene.add(camera);
 
         const lightConfig = this._lightConfig;
-        const light = new THREE.AmbientLight(lightConfig.color, lightConfig.intensity);
-        const directionalLight = new THREE.DirectionalLight(lightConfig.color, lightConfig.intensity);
+        const light = new AmbientLight(lightConfig.color, lightConfig.intensity);
+        const directionalLight = new DirectionalLight(lightConfig.color, lightConfig.intensity);
         directionalLight.position.set(lightConfig.x, lightConfig.y, lightConfig.z);
-
         scene.add(light);
         scene.add(directionalLight);
 
-        const renderer = this._renderer = new THREE.WebGLRenderer({ canvas });
+        const controls = new OrbitControls(camera, canvas);
+        controls.enableDamping = true;
+
+        const renderer = this._renderer = new WebGLRenderer({ canvas });
         renderer.setSize(sizes.width, sizes.height);
         renderer.render(scene, camera);
 
-        this._clock = new THREE.Clock();
+        this._clock = new Clock();
 
         // CREATE DISPATCHERS
-        const dispatchers = this._dispatchers = this._createDispatchers(renderer);
+        this._dispatchers = this._createDispatchers(renderer);
+
+        const assetsLoader = this._assetsLoader = new AssetsLoader();
+        assetsLoader.assetsLoadComplete.add(this._onAssetsLoaded.bind(this));
+        assetsLoader.loadAssets();
+    }
+
+    private _onAssetsLoaded(): void {
+        const dispatchers = this._dispatchers;
 
         // CREATE UI ELEMENTS
-        this._buildGameObjects(scene, dispatchers);
+        this._buildGameObjects(this._scene, dispatchers);
 
         // START DISPATCH EVENTS
         dispatchers.drag.startDispatch();
     }
 
     private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): void {
-        const uiFactory = new GameUiObjectsFactory();
-
+        const uiFactory = new GameUiObjectsFactory(this._assetsLoader);
         this._gameUI = uiFactory.buildGameUIObjects(scene, dispatchers.drag);
     }
 
-    private _createDispatchers(renderer: THREE.WebGLRenderer): IDispatchers
-    {
+    private _createDispatchers(renderer: WebGLRenderer): IDispatchers {
         const result: IDispatchers = {
             drag: new DragDispatcher(renderer)
         }
@@ -97,7 +114,9 @@ export class Game {
     public update(): void {
         this._scene.updateObject(this._clock.getDelta());
 
-        this._renderer.render(this._scene, this._mainCamera);
+        const renderer = this._renderer;
+        renderer.setClearColor("#AFEEEE")
+        renderer.render(this._scene, this._mainCamera);
     }
 
     public resize(): void {

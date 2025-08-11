@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { WebGLRenderer } from 'three';
 import { Signal } from './Signal';
 
 interface initMouseEvent {
@@ -14,9 +14,9 @@ export class DragDispatcher {
     private _previousMouseX = 0;
     private _previousMouseY = 0;
 
-    private _renderer: THREE.WebGLRenderer;
+    private _renderer: WebGLRenderer;
 
-    constructor(renderer: THREE.WebGLRenderer) {
+    constructor(renderer: WebGLRenderer) {
         this._renderer = renderer;
     }
 

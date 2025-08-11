@@ -17,7 +17,7 @@ module.exports = {
             new CopyWebpackPlugin({
                 patterns: [
                     {
-                        from: path.resolve(__dirname, '../staticAssets'),
+                        from: path.resolve(__dirname, '../static'),
                         noErrorOnMissing: true
                     }
                 ]
