@@ -5,11 +5,6 @@ import { DragDispatcher } from './utils/DragDispatcher';
 import { AssetsLoader } from './utils/AssetsLoader';
 import { AmbientLight, Clock, DirectionalLight, PerspectiveCamera, WebGLRenderer } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-// import { StandardGroup } from './gameObjects/StandardGroup';
-// import * as dat from "lil-gui";
-
-
-
 
 interface IDispatchers {
     drag: DragDispatcher;
@@ -31,9 +26,9 @@ export class Game {
 
     private _mainCameraConfig = {
         x: 0,
-        y: 10,
-        z: 15,
-        rotation: - Math.PI / 5,
+        y: 8,
+        z: 12,
+        rotation: - Math.PI /5,
         mainCameraViewAngle: 75
     }
     private _lightConfig = {

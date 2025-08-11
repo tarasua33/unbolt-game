@@ -3,7 +3,6 @@ import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFacto
 import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { ElementIDs } from "../models/HouseModel";
 import { HouseElement, HouseElementConfig } from "../objects/HouseElement";
-// import * as dat from "lil-gui";
 
 interface IParamsConfig {
     parent: IGameGroup;
@@ -15,21 +14,17 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
         const { parent } = params;
         const assetsLoader = this._assetsLoader;
 
-        // const gui = new dat.GUI();
-
         const roofTile = this._assetsLoader.assets.textures.tile!;
         roofTile.rotation = Math.PI / 2;
         roofTile.wrapS = RepeatWrapping;
         roofTile.wrapT = RepeatWrapping;
-
-        // Кількість повторів (по X і Y)
         roofTile.repeat.set(8, 8);
 
         const geometry = new BoxGeometry(3, 0.05, 5);
         const roofMaterials: MeshStandardMaterial[] = [
             new MeshStandardMaterial({ color: "#a64319" }),
             new MeshStandardMaterial({ color: "#a64319" }),
-            new MeshStandardMaterial({ map: roofTile}),
+            new MeshStandardMaterial({ map: roofTile }),
             new MeshStandardMaterial({ color: "#a64319" }),
             new MeshStandardMaterial({ color: "#a64319" }),
             new MeshStandardMaterial({ color: "#a64319" })
@@ -41,19 +36,17 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: 2.1,
                 x: -1,
                 element: assetsLoader.assets.gltf.door!,
-                elementId: ElementIDs.DOOR,
-                // gui
+                elementId: ElementIDs.DOOR
             },
             {
-                z: 2.05,
+                z: 2.1,
                 x: 1,
                 y: 1.395,
                 rotZ: Math.PI / 2,
                 scaleX: 1.19,
                 scaleY: 1.39,
                 element: assetsLoader.assets.gltf.window!,
-                elementId: ElementIDs.WINDOW_F,
-                // gui
+                elementId: ElementIDs.WINDOW_F
             },
             {
                 z: 1,
@@ -64,8 +57,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 scaleX: 1.19,
                 scaleY: 1.39,
                 element: assetsLoader.assets.gltf.window!.clone(),
-                elementId: ElementIDs.WINDOW_L,
-                // gui
+                elementId: ElementIDs.WINDOW_L
             },
             {
                 z: -1,
@@ -76,24 +68,21 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 scaleX: 1.19,
                 scaleY: 1.39,
                 element: assetsLoader.assets.gltf.window!.clone(),
-                elementId: ElementIDs.WINDOW_R,
-                // gui
+                elementId: ElementIDs.WINDOW_R
             },
             {
                 y: 1.04,
                 x: -1,
                 z: 2.035,
                 element: assetsLoader.assets.gltf.wallDoor!,
-                elementId: ElementIDs.WALL_FD,
-                // gui
+                elementId: ElementIDs.WALL_FD
             },
             {
                 y: 1.04,
                 x: 1.0,
                 z: 2.035,
                 element: assetsLoader.assets.gltf.wallWindow!,
-                elementId: ElementIDs.WALL_FW,
-                // gui
+                elementId: ElementIDs.WALL_FW
             },
             {
                 y: 1.04,
@@ -101,8 +90,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: 1,
                 rotY: Math.PI / 2,
                 element: assetsLoader.assets.gltf.wallWindow!.clone(),
-                elementId: ElementIDs.WALL_LSFW,
-                // gui
+                elementId: ElementIDs.WALL_LSFW
             },
             {
                 y: 1.04,
@@ -110,8 +98,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: -1,
                 rotY: Math.PI / 2,
                 element: assetsLoader.assets.gltf.wallFull!,
-                elementId: ElementIDs.WALL_LSB,
-                // gui
+                elementId: ElementIDs.WALL_LSB
             },
             {
                 y: 1.04,
@@ -119,8 +106,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: -1,
                 rotY: Math.PI / 2,
                 element: assetsLoader.assets.gltf.wallWindow!.clone(),
-                elementId: ElementIDs.WALL_RSBW,
-                // gui
+                elementId: ElementIDs.WALL_RSBW
             },
             {
                 y: 1.04,
@@ -128,40 +114,34 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: 1,
                 rotY: Math.PI / 2,
                 element: assetsLoader.assets.gltf.wallFull!.clone(),
-                elementId: ElementIDs.WALL_RSF,
-                // gui
+                elementId: ElementIDs.WALL_RSF
             },
             {
                 y: 1.04,
                 x: -1,
                 z: -2.035,
                 element: assetsLoader.assets.gltf.wallFull!.clone(),
-                elementId: ElementIDs.WALL_BL,
-                // gui
+                elementId: ElementIDs.WALL_BL
             },
             {
                 y: 1.04,
                 x: 1.0,
                 z: -2.035,
                 element: assetsLoader.assets.gltf.wallFull!.clone(),
-                elementId: ElementIDs.WALL_BR,
-                // gui
-            },
-            {
-                scaleX: 2.2,
-                scaleZ: 2.2,
-                y: 2.08,
-                // visible: false,
-                element: assetsLoader.assets.gltf.floorBoard!,
-                elementId: ElementIDs.FLOOR_T,
-                // gui
+                elementId: ElementIDs.WALL_BR
             },
             {
                 scaleX: 2.02,
                 scaleZ: 2.05,
                 element: assetsLoader.assets.gltf.floorPattern!,
-                elementId: ElementIDs.FLOOR_B,
-                // gui
+                elementId: ElementIDs.FLOOR_B
+            },
+            {
+                scaleX: 2.2,
+                scaleZ: 2.2,
+                y: 2.08,
+                element: assetsLoader.assets.gltf.floorBoard!,
+                elementId: ElementIDs.FLOOR_T,
             },
             {
                 x: -1.24,
@@ -172,9 +152,8 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                     geometry: geometry,
                     material: roofMaterials
                 },
-                // gui
             },
-                        {
+            {
                 x: 1.24,
                 y: 2.8,
                 rotZ: -0.59,
@@ -183,7 +162,6 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                     geometry: geometry,
                     material: roofMaterials
                 },
-                // gui
             }
         ]
 
