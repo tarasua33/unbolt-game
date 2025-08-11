@@ -3,7 +3,7 @@ import { GameUiObjectsFactory, IGameUI } from '../factories/GameUiObjectsFactory
 import { DragDispatcher } from './utils/DragDispatcher';
 import { AssetsLoader } from './utils/AssetsLoader';
 import { AmbientLight, Clock, DirectionalLight, PerspectiveCamera, WebGLRenderer } from "three";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { World } from 'cannon-es';
 import { RaycasterDispatcher } from './utils/RaycasterDispatcher';
 
@@ -31,7 +31,7 @@ export class Game {
         x: 0,
         y: 8,
         z: 12,
-        rotation: - Math.PI / 5,
+        rotation: - Math.PI / 6,
         mainCameraViewAngle: 75
     }
     private _lightConfig = {
@@ -69,8 +69,8 @@ export class Game {
         scene.add(light);
         scene.add(directionalLight);
 
-        const controls = new OrbitControls(camera, canvas);
-        controls.enableDamping = true;
+        // const controls = new OrbitControls(camera, canvas);
+        // controls.enableDamping = true;
 
         const renderer = this._renderer = new WebGLRenderer({ canvas });
         renderer.setSize(sizes.width, sizes.height);
@@ -98,8 +98,9 @@ export class Game {
         this._buildGameObjects(this._scene, dispatchers);
 
         // START DISPATCH EVENTS
+        const gameUI = this._gameUI;
         dispatchers.drag.startDispatch();
-        dispatchers.raycaster.startDispatch(this._gameUI.bolts);
+        dispatchers.raycaster.startDispatch((gameUI.bolts.slice() as any).concat(gameUI.houseElements.slice()));
     }
 
     private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): void {

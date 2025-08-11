@@ -16,9 +16,9 @@ export class MainGroupFactory extends AbstractStandardFactory<MainGameGroup> {
         const mainGameGroupConfig: MainGameGroupConfig = {
             drag,
             rotationYSpeed: 0.01,
-            scaleX: 1.5,
-            scaleY: 1.5,
-            scaleZ: 1.5
+            scaleX: 1.6,
+            scaleY: 1.6,
+            scaleZ: 1.6
         }
 
         const group = new MainGameGroup(mainGameGroupConfig);

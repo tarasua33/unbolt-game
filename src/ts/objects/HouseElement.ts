@@ -43,6 +43,7 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
 
         if (element) {
             this._element = element;
+
             this.add(element);
         }
         else if (meshConfig) {

@@ -40,9 +40,11 @@ export class RaycasterDispatcher {
         const intersects = raycaster.intersectObjects(this._objects, true);
 
         if (intersects.length > 0) {
-            const mesh = intersects[0]!.object as StandardMesh;
+            const mesh = intersects[0]!.object;
 
-            mesh.onPointed();
+            if (mesh instanceof StandardMesh) {
+                mesh.onPointed();
+            }
         }
     }
 }

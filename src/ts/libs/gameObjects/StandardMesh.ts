@@ -4,8 +4,8 @@ import { IMaterial } from './IMaterial';
 import { Signal } from '../utils/Signal';
 
 export interface IMeshConfig {
-    geometry: BufferGeometry;
-    material: IMaterial;    
+    geometry?: BufferGeometry;
+    material?: IMaterial;    
 }
 
 export interface StandardMeshConfig extends IMeshConfig {
