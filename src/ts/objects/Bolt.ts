@@ -37,9 +37,10 @@ export class Bolt extends StandardGroup<BoltConfig> {
     public buildObject(): void {
         super.buildObject();
 
-        const { boltedElementId, bodyConfig, headConfig, gui } = this._config;
+        const { boltedElementId, blockerElementId, bodyConfig, headConfig, gui } = this._config;
 
         this._boltedElementId = boltedElementId;
+        this._blockerElementId = blockerElementId;
 
         const animationGroup = this._animationGroup = new StandardGroup({});
         this.addObject(animationGroup);

@@ -18,7 +18,8 @@ export interface HouseElementConfig extends StandardGroupConfig {
     gui?: dat.GUI
 }
 
-const MIN_GRAVITY_Y = -10
+const MIN_GRAVITY_Y = -10;
+const BASE_MASS = 10;
 
 export class HouseElement extends StandardGroup<HouseElementConfig> {
     private _groupBody!: Body;
@@ -90,6 +91,28 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
         body.updateMassProperties();
     }
 
+    public applyPhysics(): void {
+        const body = this._groupBody;
+        body.mass = BASE_MASS;
+
+        if (this._elementId === ElementIDs.FLOOR_T) {
+            body.velocity.set(3.5, 3.5, 0);
+        }
+        else {
+            const { x, z } = this.position;
+
+            if (Math.abs(x) > Math.abs(z)) {
+                body.velocity.set(x * 2, 0, 0);
+            }
+            else {
+                body.velocity.set(0, 0, z * 2);
+            }
+        }
+        body.type = Body.DYNAMIC;
+
+        body.updateMassProperties();
+    }
+
     public updateObject(dt: number): void {
         super.updateObject(dt);
 
@@ -101,10 +124,10 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
             if (this.position.y < MIN_GRAVITY_Y && body.mass > 0) {
 
                 body.mass = 0;
-
                 body.velocity.set(0, 0, 0);
                 body.angularVelocity.set(0, 0, 0);
                 body.updateMassProperties();
+                body.type = Body.STATIC;
 
                 this.visible = false;
             }

@@ -6,6 +6,8 @@ import { AmbientLight, Clock, DirectionalLight, PerspectiveCamera, WebGLRenderer
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { World } from 'cannon-es';
 import { RaycasterDispatcher } from './utils/RaycasterDispatcher';
+import { BaseGameController } from '../steps/BaseGameController';
+import { HouseModel } from '../models/HouseModel';
 
 interface IDispatchers {
     drag: DragDispatcher;
@@ -20,7 +22,7 @@ export class Game {
     private _renderer: WebGLRenderer;
     private _assetsLoader: AssetsLoader;
     private _physicWorld!: World;
-    private _gravityY = -1.82;
+    private _gravityY = -2.82;
 
     private _sizes = {
         width: window.innerWidth,
@@ -43,8 +45,9 @@ export class Game {
     }
 
     private _gameUI!: IGameUI;
-
-    private _dispatchers!: IDispatchers
+    private _dispatchers!: IDispatchers;
+    private _baseGameController!: BaseGameController;
+    private _houseModel!: HouseModel;
 
     /**
      * @param {string} canvasName - ClassName or Id canvas dom
@@ -86,6 +89,9 @@ export class Game {
         // CREATE DISPATCHERS
         this._dispatchers = this._createDispatchers(renderer);
 
+        // CREATE MODELS
+        this._houseModel = new HouseModel();
+
         const assetsLoader = this._assetsLoader = new AssetsLoader();
         assetsLoader.assetsLoadComplete.add(this._onAssetsLoaded.bind(this));
         assetsLoader.loadAssets();
@@ -95,17 +101,23 @@ export class Game {
         const dispatchers = this._dispatchers;
 
         // CREATE UI ELEMENTS
-        this._buildGameObjects(this._scene, dispatchers);
+        const gameUI = this._buildGameObjects(this._scene, dispatchers);
+
+        // CREATE CONTROLLERS
+        const baseGameController = this._baseGameController = new BaseGameController(this._houseModel);
 
         // START DISPATCH EVENTS
-        const gameUI = this._gameUI;
         dispatchers.drag.startDispatch();
         dispatchers.raycaster.startDispatch((gameUI.bolts.slice() as any).concat(gameUI.houseElements.slice()));
+
+        baseGameController.start({ gameUI });
     }
 
-    private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): void {
+    private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): IGameUI {
         const uiFactory = new GameUiObjectsFactory(this._assetsLoader);
-        this._gameUI = uiFactory.buildGameUIObjects(scene, dispatchers.drag, this._physicWorld);
+        const gameUI = this._gameUI = uiFactory.buildGameUIObjects(scene, dispatchers.drag, this._physicWorld);
+
+        return gameUI
     }
 
     private _createDispatchers(renderer: WebGLRenderer): IDispatchers {

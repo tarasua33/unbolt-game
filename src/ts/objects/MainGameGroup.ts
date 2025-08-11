@@ -1,5 +1,4 @@
 import { DragGroup, DragGroupConfig } from "../libs/gameObjects/DragGroup";
-// import { StandardMesh, StandardMeshConfig } from "../libs/gameObjects/StandardMesh";
 
 export interface MainGameGroupConfig extends DragGroupConfig
 {
@@ -8,14 +7,5 @@ export interface MainGameGroupConfig extends DragGroupConfig
 
 export class MainGameGroup extends DragGroup<MainGameGroupConfig>
 {
-    // public houseElements = [];
-    // public buildObject(): void {
-    //     super.buildObject();
-        
-    //     // const {cubeConfig} = this._config;
-
-    //     // const cube = new StandardMesh(cubeConfig);
-    //     // cube.buildObject();
-    //     // this.addObject(cube);
-    // }
+    // pass
 }

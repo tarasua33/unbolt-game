@@ -175,7 +175,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 x: 1.24,
                 y: 2.8,
                 rotZ: -0.59,
-                elementId: ElementIDs.ROOF_L,
+                elementId: ElementIDs.ROOF_R,
                 meshConfig: {
                     geometry: geometry,
                     material: roofMaterials
