@@ -2,6 +2,7 @@ import { StandardGroup, StandardGroupConfig } from "../libs/gameObjects/Standard
 import { ElementIDs } from "../models/HouseModel";
 import * as dat from "lil-gui";
 import { StandardMesh, StandardMeshConfig } from "../libs/gameObjects/StandardMesh";
+import { Signal } from "../libs/utils/Signal";
 
 export interface BoltConfig extends StandardGroupConfig {
     bodyConfig: StandardMeshConfig;
@@ -13,6 +14,8 @@ export interface BoltConfig extends StandardGroupConfig {
 
 
 export class Bolt extends StandardGroup<BoltConfig> {
+    public raycasterSignal = new Signal();
+
     private _boltedElementId!: ElementIDs;
     private _blockerElementId!: ElementIDs | undefined;
 
@@ -47,6 +50,7 @@ export class Bolt extends StandardGroup<BoltConfig> {
 
         const head = new StandardMesh(headConfig);
         head.buildObject();
+        head.raycasterSignal.add(this._onPointed.bind(this));
         animationGroup.addObject(head);
 
         // DEV
@@ -63,5 +67,10 @@ export class Bolt extends StandardGroup<BoltConfig> {
             folder.add(this.scale, "y").min(-5).max(5).step(delta).name("Scale y");
             folder.add(this.scale, "z").min(-5).max(5).step(delta).name("Scale z");
         }
+    }
+
+    public _onPointed(): void {
+        console.log("POINTED");
+        this.raycasterSignal.dispatch(this);
     }
 }

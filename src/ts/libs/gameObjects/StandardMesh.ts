@@ -1,6 +1,7 @@
 import { BufferGeometry, Mesh } from 'three';
 import { IGameObject } from './IGameObject';
 import { IMaterial } from './IMaterial';
+import { Signal } from '../utils/Signal';
 
 export interface IMeshConfig {
     geometry: BufferGeometry;
@@ -21,6 +22,8 @@ export interface StandardMeshConfig extends IMeshConfig {
 }
 
 export class StandardMesh<T extends StandardMeshConfig = StandardMeshConfig> extends Mesh implements IGameObject {
+    public raycasterSignal = new Signal();
+
     protected _config: T;
 
     constructor(config: T) {
@@ -49,5 +52,10 @@ export class StandardMesh<T extends StandardMeshConfig = StandardMeshConfig> ext
     public updateObject(dt: number): void {
         /* eslint-enable */
         // pass
+    }
+
+    public onPointed(): void
+    {
+        this.raycasterSignal.dispatch()
     }
 }

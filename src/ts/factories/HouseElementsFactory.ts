@@ -3,15 +3,17 @@ import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFacto
 import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { ElementIDs } from "../models/HouseModel";
 import { HouseElement, HouseElementConfig } from "../objects/HouseElement";
+import { World } from "cannon-es";
 
 interface IParamsConfig {
     parent: IGameGroup;
+    physicWorld: World;
 }
 
 export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]> {
 
     public buildUi(params: IParamsConfig): HouseElement[] {
-        const { parent } = params;
+        const { parent, physicWorld } = params;
         const assetsLoader = this._assetsLoader;
 
         const roofTile = this._assetsLoader.assets.textures.tile!;
@@ -36,7 +38,9 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: 2.1,
                 x: -1,
                 element: assetsLoader.assets.gltf.door!,
-                elementId: ElementIDs.DOOR
+                elementId: ElementIDs.DOOR,
+                physicWorld
+                // initialMas: 10
             },
             {
                 z: 2.1,
@@ -46,7 +50,8 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 scaleX: 1.19,
                 scaleY: 1.39,
                 element: assetsLoader.assets.gltf.window!,
-                elementId: ElementIDs.WINDOW_F
+                elementId: ElementIDs.WINDOW_F,
+                physicWorld
             },
             {
                 z: 1,
@@ -57,7 +62,8 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 scaleX: 1.19,
                 scaleY: 1.39,
                 element: assetsLoader.assets.gltf.window!.clone(),
-                elementId: ElementIDs.WINDOW_L
+                elementId: ElementIDs.WINDOW_L,
+                physicWorld
             },
             {
                 z: -1,
@@ -68,21 +74,24 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 scaleX: 1.19,
                 scaleY: 1.39,
                 element: assetsLoader.assets.gltf.window!.clone(),
-                elementId: ElementIDs.WINDOW_R
+                elementId: ElementIDs.WINDOW_R,
+                physicWorld
             },
             {
                 y: 1.04,
                 x: -1,
                 z: 2.035,
                 element: assetsLoader.assets.gltf.wallDoor!,
-                elementId: ElementIDs.WALL_FD
+                elementId: ElementIDs.WALL_FD,
+                physicWorld
             },
             {
                 y: 1.04,
                 x: 1.0,
                 z: 2.035,
                 element: assetsLoader.assets.gltf.wallWindow!,
-                elementId: ElementIDs.WALL_FW
+                elementId: ElementIDs.WALL_FW,
+                physicWorld
             },
             {
                 y: 1.04,
@@ -90,7 +99,8 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: 1,
                 rotY: Math.PI / 2,
                 element: assetsLoader.assets.gltf.wallWindow!.clone(),
-                elementId: ElementIDs.WALL_LSFW
+                elementId: ElementIDs.WALL_LSFW,
+                physicWorld
             },
             {
                 y: 1.04,
@@ -98,7 +108,8 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: -1,
                 rotY: Math.PI / 2,
                 element: assetsLoader.assets.gltf.wallFull!,
-                elementId: ElementIDs.WALL_LSB
+                elementId: ElementIDs.WALL_LSB,
+                physicWorld
             },
             {
                 y: 1.04,
@@ -106,7 +117,8 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: -1,
                 rotY: Math.PI / 2,
                 element: assetsLoader.assets.gltf.wallWindow!.clone(),
-                elementId: ElementIDs.WALL_RSBW
+                elementId: ElementIDs.WALL_RSBW,
+                physicWorld
             },
             {
                 y: 1.04,
@@ -114,27 +126,31 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 z: 1,
                 rotY: Math.PI / 2,
                 element: assetsLoader.assets.gltf.wallFull!.clone(),
-                elementId: ElementIDs.WALL_RSF
+                elementId: ElementIDs.WALL_RSF,
+                physicWorld
             },
             {
                 y: 1.04,
                 x: -1,
                 z: -2.035,
                 element: assetsLoader.assets.gltf.wallFull!.clone(),
-                elementId: ElementIDs.WALL_BL
+                elementId: ElementIDs.WALL_BL,
+                physicWorld
             },
             {
                 y: 1.04,
                 x: 1.0,
                 z: -2.035,
                 element: assetsLoader.assets.gltf.wallFull!.clone(),
-                elementId: ElementIDs.WALL_BR
+                elementId: ElementIDs.WALL_BR,
+                physicWorld
             },
             {
                 scaleX: 2.02,
                 scaleZ: 2.05,
                 element: assetsLoader.assets.gltf.floorPattern!,
-                elementId: ElementIDs.FLOOR_B
+                elementId: ElementIDs.FLOOR_B,
+                physicWorld
             },
             {
                 scaleX: 2.2,
@@ -142,6 +158,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                 y: 2.08,
                 element: assetsLoader.assets.gltf.floorBoard!,
                 elementId: ElementIDs.FLOOR_T,
+                physicWorld
             },
             {
                 x: -1.24,
@@ -152,6 +169,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                     geometry: geometry,
                     material: roofMaterials
                 },
+                physicWorld
             },
             {
                 x: 1.24,
@@ -162,6 +180,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
                     geometry: geometry,
                     material: roofMaterials
                 },
+                physicWorld
             }
         ]
 

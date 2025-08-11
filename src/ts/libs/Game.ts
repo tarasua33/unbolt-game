@@ -1,14 +1,15 @@
 import { StandardScene } from './gameObjects/StandardScene';
-import { GameUiObjectsFactory } from '../factories/GameUiObjectsFactory';
-import { IGameObject } from './gameObjects/IGameObject';
+import { GameUiObjectsFactory, IGameUI } from '../factories/GameUiObjectsFactory';
 import { DragDispatcher } from './utils/DragDispatcher';
 import { AssetsLoader } from './utils/AssetsLoader';
 import { AmbientLight, Clock, DirectionalLight, PerspectiveCamera, WebGLRenderer } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { World } from 'cannon-es';
+import { RaycasterDispatcher } from './utils/RaycasterDispatcher';
 
 interface IDispatchers {
     drag: DragDispatcher;
-
+    raycaster: RaycasterDispatcher;
 }
 
 export class Game {
@@ -18,6 +19,8 @@ export class Game {
     private _scene: StandardScene;
     private _renderer: WebGLRenderer;
     private _assetsLoader: AssetsLoader;
+    private _physicWorld!: World;
+    private _gravityY = -1.82;
 
     private _sizes = {
         width: window.innerWidth,
@@ -28,7 +31,7 @@ export class Game {
         x: 0,
         y: 8,
         z: 12,
-        rotation: - Math.PI /5,
+        rotation: - Math.PI / 5,
         mainCameraViewAngle: 75
     }
     private _lightConfig = {
@@ -39,7 +42,7 @@ export class Game {
         z: 0
     }
 
-    private _gameUI!: Record<string, IGameObject | IGameObject[]>;
+    private _gameUI!: IGameUI;
 
     private _dispatchers!: IDispatchers
 
@@ -73,6 +76,11 @@ export class Game {
         renderer.setSize(sizes.width, sizes.height);
         renderer.render(scene, camera);
 
+        // PHYSIC WORLD
+        const world = this._physicWorld = new World();
+        world.gravity.set(0, this._gravityY, 0);
+
+        // FPS CLOCK
         this._clock = new Clock();
 
         // CREATE DISPATCHERS
@@ -91,23 +99,28 @@ export class Game {
 
         // START DISPATCH EVENTS
         dispatchers.drag.startDispatch();
+        dispatchers.raycaster.startDispatch(this._gameUI.bolts);
     }
 
     private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): void {
         const uiFactory = new GameUiObjectsFactory(this._assetsLoader);
-        this._gameUI = uiFactory.buildGameUIObjects(scene, dispatchers.drag);
+        this._gameUI = uiFactory.buildGameUIObjects(scene, dispatchers.drag, this._physicWorld);
     }
 
     private _createDispatchers(renderer: WebGLRenderer): IDispatchers {
         const result: IDispatchers = {
-            drag: new DragDispatcher(renderer)
+            drag: new DragDispatcher(renderer),
+            raycaster: new RaycasterDispatcher(renderer, this._mainCamera)
         }
 
         return result
     }
 
     public update(): void {
-        this._scene.updateObject(this._clock.getDelta());
+        const dt = this._clock.getDelta();
+        this._physicWorld.step(1 / 60, dt, 3);
+
+        this._scene.updateObject(dt);
 
         const renderer = this._renderer;
         renderer.setClearColor("#AFEEEE")

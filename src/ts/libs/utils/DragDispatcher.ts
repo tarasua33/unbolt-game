@@ -1,7 +1,7 @@
 import { WebGLRenderer } from 'three';
 import { Signal } from './Signal';
 
-interface initMouseEvent {
+interface IMouseEvent {
     clientX: number;
     clientY: number;
 }
@@ -29,7 +29,7 @@ export class DragDispatcher {
         renderer.domElement.addEventListener('pointermove', this._onMouseMove.bind(this));
     }
 
-    private _onMouseMove(event: initMouseEvent): void {
+    private _onMouseMove(event: IMouseEvent): void {
         if (!this._isDragging) return;
 
         const deltaX = event.clientX - this._previousMouseX;
@@ -42,7 +42,7 @@ export class DragDispatcher {
         this.dragYSignal.dispatch(deltaY);
     }
 
-    private _onStartDrag(event: initMouseEvent): void {
+    private _onStartDrag(event: IMouseEvent): void {
         this._isDragging = true;
         this._previousMouseX = event.clientX;
         this._previousMouseY = event.clientY;

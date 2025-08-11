@@ -1,11 +1,14 @@
 import { StandardGroup, StandardGroupConfig } from "../libs/gameObjects/StandardGroup";
 import { ElementIDs } from "../models/HouseModel";
-import { Object3D, BufferGeometry, Material } from 'three';
-// import { Object3D, BufferGeometry, Material, Box3, Vector3 } from 'three';
+// import { Object3D, BufferGeometry, Material } from 'three';
+import { Object3D, BufferGeometry, Material, Box3, Vector3 } from 'three';
 import * as dat from "lil-gui";
 import { StandardMesh } from "../libs/gameObjects/StandardMesh";
+import { Body, Box, Vec3, World } from "cannon-es";
 
 export interface HouseElementConfig extends StandardGroupConfig {
+    physicWorld: World;
+    initialMas?: number;
     element?: Object3D;
     meshConfig?: {
         geometry: BufferGeometry;
@@ -15,8 +18,10 @@ export interface HouseElementConfig extends StandardGroupConfig {
     gui?: dat.GUI
 }
 
+const MIN_GRAVITY_Y = -10
 
 export class HouseElement extends StandardGroup<HouseElementConfig> {
+    private _groupBody!: Body;
     private _elementId!: ElementIDs;
     private _element!: Object3D
     private _bolted = true;
@@ -32,17 +37,15 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
     public buildObject(): void {
         super.buildObject();
 
-        const { elementId, element, meshConfig, gui } = this._config;
+        const { elementId, element, meshConfig, gui, physicWorld, initialMas } = this._config;
 
         this._elementId = elementId;
 
-        if (element)
-        {
-        this._element = element;
-        this.add(element);
+        if (element) {
+            this._element = element;
+            this.add(element);
         }
-        else if (meshConfig)
-        {
+        else if (meshConfig) {
             const element = this._element = new StandardMesh(meshConfig);
 
             this.addObject(element)
@@ -63,10 +66,47 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
             folder.add(this.scale, "z").min(-5).max(5).step(delta).name("Scale z");
         }
 
-        // const box = new Box3().setFromObject(this);
-        // const size = new Vector3();
-        // box.getSize(size);
+        this._addPhysicBody(physicWorld, initialMas);
+    }
+
+    private _addPhysicBody(physicWorld: World, initialMas = 0): void {
+        const box = new Box3().setFromObject(this);
+        const size = new Vector3();
+        box.getSize(size);
 
         // console.log(size);
+        const halfDimensions = new Vec3(size.x / 2, size.y / 2, size.z / 2);
+
+        const shape = new Box(halfDimensions);
+        const body = this._groupBody = new Body({ mass: initialMas });
+        const { x, y, z } = this.position;
+        body.position.set(x, y, z);
+        const { x: qX, y: qY, z: qZ, w } = this.quaternion;
+        body.quaternion.set(qX, qY, qZ, w);
+        body.addShape(shape);
+        physicWorld.addBody(body);
+
+        body.updateMassProperties();
+    }
+
+    public updateObject(dt: number): void {
+        super.updateObject(dt);
+
+        const body = this._groupBody;
+        if (body) {
+            this.position.copy(this._groupBody.position);
+            this.quaternion.copy(this._groupBody.quaternion);
+
+            if (this.position.y < MIN_GRAVITY_Y && body.mass > 0) {
+
+                body.mass = 0;
+
+                body.velocity.set(0, 0, 0);
+                body.angularVelocity.set(0, 0, 0);
+                body.updateMassProperties();
+
+                this.visible = false;
+            }
+        }
     }
 }
