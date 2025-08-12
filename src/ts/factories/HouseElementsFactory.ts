@@ -1,12 +1,13 @@
 import { BoxGeometry, MeshStandardMaterial, RepeatWrapping } from "three";
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
-import { IGameGroup } from "../libs/gameObjects/IGameGroup";
+// import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { ElementIDs } from "../models/HouseModel";
 import { HouseElement, HouseElementConfig } from "../objects/HouseElement";
 import { World } from "cannon-es";
+import { MainGameGroup } from "../objects/MainGameGroup";
 
 interface IParamsConfig {
-    parent: IGameGroup;
+    parent: MainGameGroup;
     physicWorld: World;
 }
 
@@ -190,6 +191,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
             element.buildObject();
             parent.addObject(element)
 
+            parent.houseElements.push(element);
             houseElements.push(element);
         }
 

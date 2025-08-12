@@ -20,6 +20,7 @@ export interface HouseElementConfig extends StandardGroupConfig {
 
 const MIN_GRAVITY_Y = -10;
 const BASE_MASS = 10;
+const MAX_DRAG_VELOCITY = 4;
 
 export class HouseElement extends StandardGroup<HouseElementConfig> {
     private _groupBody!: Body;
@@ -111,6 +112,25 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
         body.type = Body.DYNAMIC;
 
         body.updateMassProperties();
+    }
+
+    public addDragVelocity(): void {
+        if (this._groupBody.mass > 0) {
+            const body = this._groupBody;
+
+            const { x, z } = this.position;
+
+            if (Math.abs(x) > Math.abs(z)) {
+                const multiplier = x < 0 ? -1 : 1;
+                const abs = Math.max(Math.abs(x), MAX_DRAG_VELOCITY)
+                body.velocity.set(abs * multiplier, 0, body.velocity.z);
+            }
+            else {
+                const multiplier = z < 0 ? -1 : 1;
+                const abs = Math.max(Math.abs(z), MAX_DRAG_VELOCITY)
+                body.velocity.set(body.velocity.x, 0, multiplier * abs);
+            }
+        }
     }
 
     public updateObject(dt: number): void {
