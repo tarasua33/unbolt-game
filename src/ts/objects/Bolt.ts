@@ -3,6 +3,7 @@ import { ElementIDs } from "../models/HouseModel";
 import * as dat from "lil-gui";
 import { StandardMesh, StandardMeshConfig } from "../libs/gameObjects/StandardMesh";
 import { Signal } from "../libs/utils/Signal";
+import { Easing, Group, Tween } from "@tweenjs/tween.js";
 
 export interface BoltConfig extends StandardGroupConfig {
     bodyConfig: StandardMeshConfig;
@@ -21,6 +22,11 @@ export class Bolt extends StandardGroup<BoltConfig> {
 
     private _bolted = true;
     private _animationGroup!: StandardGroup;
+
+    private _progress = 0;
+    private _animYOffset = 4;
+    private _animYRotation = Math.PI * 6;
+    private _tweenGroup!: Group
 
     public get boltedElementId(): ElementIDs {
         return this._boltedElementId;
@@ -54,6 +60,8 @@ export class Bolt extends StandardGroup<BoltConfig> {
         head.raycasterSignal.add(this._onPointed.bind(this));
         animationGroup.addObject(head);
 
+        this._tweenGroup = new Group();
+
         // DEV
         if (gui) {
             const delta = 0.005
@@ -73,5 +81,50 @@ export class Bolt extends StandardGroup<BoltConfig> {
     public _onPointed(): void {
         console.log("POINTED");
         this.raycasterSignal.dispatch(this);
+    }
+
+    public unbolt(): void {
+        this._bolted = false;
+
+        this._startTweenAnimation();
+    }
+
+    private _startTweenAnimation(): void {
+        this._progress = 0;
+        this._animationGroup.rotation.z = Math.PI / 4;
+
+        new Tween(this, this._tweenGroup)
+            .to({ progress: 1 }, 1500)
+            .easing(Easing.Exponential.Out)
+            .onComplete(this._onCompleteUnboltedAnimation.bind(this))
+            .start()
+    }
+
+    private _onCompleteUnboltedAnimation(): void {
+        this.visible = false;
+    }
+
+    private set progress(value: number) {
+        this._progress = value;
+
+        const animationGroup = this._animationGroup;
+        animationGroup.position.y = this._progress * this._animYOffset;
+        animationGroup.rotation.y = this._progress * this._animYRotation;
+
+        const helpValue = Easing.Back.In(value);
+
+        animationGroup.scale.x = 1 - Math.sin(helpValue);
+        animationGroup.scale.y = 1 - Math.sin(helpValue);
+        animationGroup.scale.z = 1 - Math.sin(helpValue);
+    }
+
+    private get progress(): number {
+        return this._progress;
+    }
+
+    public updateObject(dt: number): void {
+        super.updateObject(dt);
+
+        this._tweenGroup.update(performance.now())
     }
 }

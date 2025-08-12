@@ -13,7 +13,7 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
     private _elementsMap!: Map<ElementIDs, HouseElement>;
 
     public start(params: T) {
-        const {bolts, houseElements} = this._params = params;
+        const { bolts, houseElements } = this._params = params;
 
         const elementsMap: Map<ElementIDs, HouseElement> = this._elementsMap = new Map();
         for (const element of houseElements) {
@@ -25,26 +25,26 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
         }
     }
 
-    private _onBoltPointed(bolt: Bolt): void
-    {
-        const blockerElementId = bolt.blockerElementId;
+    private _onBoltPointed(bolt: Bolt): void {
+        if (bolt.bolted) {
+            const blockerElementId = bolt.blockerElementId;
 
-        const houseModel = this._houseModel;
+            const houseModel = this._houseModel;
 
-        if (!blockerElementId || houseModel.boltedElements.indexOf(blockerElementId) === -1)
-        {
-            // taskMap.get(bolt.boltedElementId)
-            const config = houseModel.taskMap.get(bolt.boltedElementId);
-            config!.boltsNum--;
+            if (!blockerElementId || houseModel.boltedElements.indexOf(blockerElementId) === -1) {
+                // taskMap.get(bolt.boltedElementId)
+                const config = houseModel.taskMap.get(bolt.boltedElementId);
+                config!.boltsNum--;
+                bolt.unbolt();
 
-            if (config!.boltsNum <= 0)
-            {
-                const element = this._elementsMap.get(bolt.boltedElementId)!
+                if (config!.boltsNum <= 0) {
+                    const element = this._elementsMap.get(bolt.boltedElementId)!
 
-                const inx = houseModel.boltedElements.indexOf(element.elementId);
-                houseModel.boltedElements.splice(inx, 1);
+                    const inx = houseModel.boltedElements.indexOf(element.elementId);
+                    houseModel.boltedElements.splice(inx, 1);
 
-                element.applyPhysics();
+                    element.applyPhysics();
+                }
             }
         }
     }

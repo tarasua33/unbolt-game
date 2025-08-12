@@ -102,10 +102,10 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
             const { x, z } = this.position;
 
             if (Math.abs(x) > Math.abs(z)) {
-                body.velocity.set(x * 2, 0, 0);
+                body.velocity.set(x * 2, 0, body.velocity.z);
             }
             else {
-                body.velocity.set(0, 0, z * 2);
+                body.velocity.set(body.velocity.x, 0, z * 2);
             }
         }
         body.type = Body.DYNAMIC;

@@ -9,7 +9,7 @@ const stats = new Stats();
 stats.showPanel(0);
 document.body.appendChild(stats.dom);
 
-const tick = () => {
+function tick(): void {
     stats.begin();
     game.update();
     stats.end();
