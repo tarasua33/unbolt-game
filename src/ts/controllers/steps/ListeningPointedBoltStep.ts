@@ -1,18 +1,18 @@
-import { BaseStep } from "../libs/utils/BaseStep";
-import { ElementIDs } from "../models/HouseModel";
-import { Bolt } from "../objects/Bolt";
-import { HouseElement } from "../objects/HouseElement";
+import { BaseStep, BaseStepParams } from "../../libs/controllers/BaseStep";
+import { ElementIDs } from "../../models/HouseModel";
+import { Bolt } from "../../objects/Bolt";
+import { HouseElement } from "../../objects/HouseElement";
 
-interface IListeningPointedBoltStepParams {
+interface IListeningPointedBoltStepParams extends BaseStepParams {
     bolts: Bolt[];
     houseElements: HouseElement[]
 }
 
 export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams = IListeningPointedBoltStepParams> extends BaseStep {
-    private _params!: T;
+    // protected _params: T;
     private _elementsMap!: Map<ElementIDs, HouseElement>;
 
-    public start(params: T) {
+    public start(params: T): void {
         const { bolts, houseElements } = this._params = params;
 
         const elementsMap: Map<ElementIDs, HouseElement> = this._elementsMap = new Map();

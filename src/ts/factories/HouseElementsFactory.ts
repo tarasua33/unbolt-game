@@ -1,6 +1,5 @@
 import { BoxGeometry, MeshStandardMaterial, RepeatWrapping } from "three";
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
-// import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { ElementIDs } from "../models/HouseModel";
 import { HouseElement, HouseElementConfig } from "../objects/HouseElement";
 import { World } from "cannon-es";

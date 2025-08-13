@@ -1,14 +1,13 @@
 import { IGameUI } from "../factories/GameUiObjectsFactory";
-import { BaseStep } from "../libs/utils/BaseStep";
+import { BaseStep, BaseStepParams } from "../libs/controllers/BaseStep";
 import { HouseModel } from "../models/HouseModel";
-import { ListeningPointedBoltStep } from "./ListeningPointedBoltStep";
+import { ListeningPointedBoltStep } from "./steps/ListeningPointedBoltStep";
 
-interface IControllerParams {
+interface IControllerParams extends BaseStepParams{
     gameUI: IGameUI;
 }
 
-export class BaseGameController  extends BaseStep {
-    private _params!: IControllerParams;
+export class BaseGameController  extends BaseStep<IControllerParams> {
     private _listeningPointedBoltStep: ListeningPointedBoltStep;
 
     constructor(houseModel: HouseModel)
@@ -18,7 +17,7 @@ export class BaseGameController  extends BaseStep {
         this._listeningPointedBoltStep = new ListeningPointedBoltStep(houseModel);
     }
 
-    public start(params: IControllerParams) {
+    public start(params: IControllerParams): void {
         const {gameUI} = this._params = params;
 
         this._listeningPointedBoltStep.start({

@@ -8,7 +8,7 @@ export interface MainGameGroupConfig extends DragGroupConfig {
 export class MainGameGroup extends DragGroup<MainGameGroupConfig> {
     public houseElements: HouseElement[] = [];
 
-    protected _onDrag(deltaX: number) {
+    protected _onDrag(deltaX: number): void {
         super._onDrag(deltaX);
 
         for (const element of this.houseElements) {

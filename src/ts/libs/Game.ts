@@ -6,7 +6,7 @@ import { AmbientLight, Clock, DirectionalLight, PerspectiveCamera, WebGLRenderer
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { World } from 'cannon-es';
 import { RaycasterDispatcher } from './utils/RaycasterDispatcher';
-import { BaseGameController } from '../steps/BaseGameController';
+import { BaseGameController } from '../controllers/BaseGameController';
 import { HouseModel } from '../models/HouseModel';
 
 interface IDispatchers {
@@ -22,7 +22,7 @@ export class Game {
     private _renderer: WebGLRenderer;
     private _assetsLoader: AssetsLoader;
     private _physicWorld!: World;
-    private _gravityY = -2.82;
+    private _gravityY = -9.8;
 
     private _sizes = {
         width: window.innerWidth,
@@ -43,6 +43,7 @@ export class Game {
         y: 10,
         z: 0
     }
+    private _bgColor = "#AFEEEE";
 
     private _gameUI!: IGameUI;
     private _dispatchers!: IDispatchers;
@@ -115,7 +116,12 @@ export class Game {
 
     private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): IGameUI {
         const uiFactory = new GameUiObjectsFactory(this._assetsLoader);
-        const gameUI = this._gameUI = uiFactory.buildGameUIObjects(scene, dispatchers.drag, this._physicWorld);
+        const gameUI = this._gameUI = uiFactory.buildGameUIObjects({
+            scene,
+            camera: this._mainCamera,
+            drag: dispatchers.drag,
+            physicWorld: this._physicWorld
+        });
 
         return gameUI
     }
@@ -136,7 +142,7 @@ export class Game {
         this._scene.updateObject(dt);
 
         const renderer = this._renderer;
-        renderer.setClearColor("#AFEEEE")
+        renderer.setClearColor(this._bgColor);
         renderer.render(this._scene, this._mainCamera);
     }
 

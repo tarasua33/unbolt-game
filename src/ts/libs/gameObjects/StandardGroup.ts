@@ -26,6 +26,14 @@ export class StandardGroup<T extends StandardGroupConfig = StandardGroupConfig> 
     }
 
     public buildObject(): void {
+        this._setBaseConfig();
+    }
+
+    public reset(): void {
+        this._setBaseConfig();
+    }
+
+    private _setBaseConfig(): void {
         const config = this._config;
         const { x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, visible } = config;
 

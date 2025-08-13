@@ -18,7 +18,7 @@ export interface HouseElementConfig extends StandardGroupConfig {
     gui?: dat.GUI
 }
 
-const MIN_GRAVITY_Y = -10;
+const MIN_GRAVITY_Y = -40;
 const BASE_MASS = 10;
 const MAX_DRAG_VELOCITY = 4;
 
@@ -122,12 +122,12 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
 
             if (Math.abs(x) > Math.abs(z)) {
                 const multiplier = x < 0 ? -1 : 1;
-                const abs = Math.max(Math.abs(x), MAX_DRAG_VELOCITY)
+                const abs = Math.min(Math.abs(x), MAX_DRAG_VELOCITY)
                 body.velocity.set(abs * multiplier, 0, body.velocity.z);
             }
             else {
                 const multiplier = z < 0 ? -1 : 1;
-                const abs = Math.max(Math.abs(z), MAX_DRAG_VELOCITY)
+                const abs = Math.min(Math.abs(z), MAX_DRAG_VELOCITY)
                 body.velocity.set(body.velocity.x, 0, multiplier * abs);
             }
         }
@@ -152,5 +152,24 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
                 this.visible = false;
             }
         }
+    }
+
+    public reset(): void {
+        super.reset();
+
+        const body = this._groupBody;
+
+        const { x, y, z } = this.position;
+        body.position.set(x, y, z);
+        const { x: qX, y: qY, z: qZ, w } = this.quaternion;
+        body.quaternion.set(qX, qY, qZ, w);
+
+        body.mass = 0;
+        body.velocity.set(0, 0, 0);
+        body.angularVelocity.set(0, 0, 0);
+        body.updateMassProperties();
+        body.type = Body.STATIC;
+
+        this.visible = true;
     }
 }

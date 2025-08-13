@@ -127,4 +127,15 @@ export class Bolt extends StandardGroup<BoltConfig> {
 
         this._tweenGroup.update(performance.now())
     }
+
+    public reset(): void {
+        super.reset();
+
+        const animationGroup = this._animationGroup;
+        animationGroup.position.set(0, 0, 0);
+        animationGroup.rotation.set(0, 0, 0);
+        animationGroup.scale.set(1, 1, 1);
+
+        this.visible = true;
+    }
 }

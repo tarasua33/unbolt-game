@@ -38,7 +38,14 @@ export default [
         overrides: {
           constructors: 'no-public',
         },
-      }]
+      }],
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: false,
+          allowTypedFunctionExpressions: true
+        }
+      ]
     },
   },
 ];

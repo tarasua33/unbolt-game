@@ -22,7 +22,7 @@ export class DragGroup<T extends DragGroupConfig = DragGroupConfig> extends Stan
         drag.dragXSignal.add(this._onDrag.bind(this));
     }
 
-    protected _onDrag(deltaX: number)
+    protected _onDrag(deltaX: number): void
     {
         this.rotation.y += deltaX * this._rotationYSpeed;
     }

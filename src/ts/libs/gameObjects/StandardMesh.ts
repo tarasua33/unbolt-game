@@ -5,7 +5,7 @@ import { Signal } from '../utils/Signal';
 
 export interface IMeshConfig {
     geometry?: BufferGeometry;
-    material?: IMaterial;    
+    material?: IMaterial;
 }
 
 export interface StandardMeshConfig extends IMeshConfig {
@@ -33,6 +33,14 @@ export class StandardMesh<T extends StandardMeshConfig = StandardMeshConfig> ext
     }
 
     public buildObject(): void {
+        this._setBaseConfig();
+    }
+
+    public reset(): void {
+        this._setBaseConfig();
+    }
+
+    private _setBaseConfig(): void {
         const config = this._config;
         const { x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, visible } = config;
 
@@ -54,8 +62,7 @@ export class StandardMesh<T extends StandardMeshConfig = StandardMeshConfig> ext
         // pass
     }
 
-    public onPointed(): void
-    {
+    public onPointed(): void {
         this.raycasterSignal.dispatch()
     }
 }
