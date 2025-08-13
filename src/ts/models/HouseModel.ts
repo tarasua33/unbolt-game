@@ -46,7 +46,7 @@ const boltedElements = [
     ElementIDs.ROOF_R
 ]
 
-const taskMap: Map<ElementIDs, {boltsNum: number}> = new Map([
+const taskMap: Map<ElementIDs, { boltsNum: number }> = new Map([
     [ElementIDs.DOOR, { boltsNum: 1 }],
     [ElementIDs.WINDOW_F, { boltsNum: 1 }],
     [ElementIDs.WINDOW_L, { boltsNum: 1 }],
@@ -68,8 +68,17 @@ const taskMap: Map<ElementIDs, {boltsNum: number}> = new Map([
 export class HouseModel {
     public assetsElementTypes = [ElementTypes.DOOR, ElementTypes.FL_B, ElementTypes.FL_P, ElementTypes.WINDOW, ElementTypes.WOOL_D, ElementTypes.WOOL_F, ElementTypes.WOOL_W];
 
-    public boltedElements = boltedElements.slice()
-    public taskMap: Map<ElementIDs, {boltsNum: number}> = new Map(
+    public boltedElements = new Set(boltedElements);
+
+    public taskMap: Map<ElementIDs, { boltsNum: number }> = new Map(
         Array.from(taskMap).map(([key, value]) => [key, JSON.parse(JSON.stringify(value))])
     )
+
+    public reset(): void {
+        this.boltedElements = new Set(boltedElements);
+
+        this.taskMap = new Map(
+            Array.from(taskMap).map(([key, value]) => [key, JSON.parse(JSON.stringify(value))])
+        )
+    }
 }

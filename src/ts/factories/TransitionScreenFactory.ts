@@ -1,10 +1,11 @@
-import { Camera, CanvasTexture, MeshBasicMaterial, PlaneGeometry } from "three";
+import { CanvasTexture, MeshBasicMaterial, PlaneGeometry } from "three";
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
 import { TransitionScreen, TransitionScreenConfig } from "../objects/screens/TransitionScreen";
 import { createCircleGraphic } from "../libs/utils/GameHelpers";
+import { MainCamera } from "../libs/gameObjects/MainCamera";
 
 interface IParamsConfig {
-    parent: Camera;
+    parent: MainCamera;
 }
 
 export class TransitionScreenFactory extends AbstractStandardFactory<TransitionScreen> {
@@ -26,12 +27,13 @@ export class TransitionScreenFactory extends AbstractStandardFactory<TransitionS
                 transparent: true
             }),
             geometry: new PlaneGeometry(3, 3,),
-            z: -2
+            z: -2,
+            visible: false
         }
 
         const screen = new TransitionScreen(transitionScreenConfig);
         screen.buildObject();
-        parent.add(screen)
+        parent.addObject(screen)
 
         return screen
     }

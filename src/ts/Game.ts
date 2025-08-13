@@ -1,13 +1,16 @@
-import { StandardScene } from './gameObjects/StandardScene';
-import { GameUiObjectsFactory, IGameUI } from '../factories/GameUiObjectsFactory';
-import { DragDispatcher } from './utils/DragDispatcher';
-import { AssetsLoader } from './utils/AssetsLoader';
-import { AmbientLight, Clock, DirectionalLight, PerspectiveCamera, WebGLRenderer } from "three";
+import { StandardScene } from './libs/gameObjects/StandardScene';
+import { GameUiObjectsFactory, IGameUI } from './factories/GameUiObjectsFactory';
+import { DragDispatcher } from './libs/utils/DragDispatcher';
+import { AssetsLoader } from './libs/utils/AssetsLoader';
+import { AmbientLight, Clock, DirectionalLight, WebGLRenderer } from "three";
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { World } from 'cannon-es';
-import { RaycasterDispatcher } from './utils/RaycasterDispatcher';
-import { BaseGameController } from '../controllers/BaseGameController';
-import { HouseModel } from '../models/HouseModel';
+import { RaycasterDispatcher } from './libs/utils/RaycasterDispatcher';
+import { BaseGameController } from './controllers/BaseGameController';
+import { HouseModel } from './models/HouseModel';
+import { BoltsModel } from './models/BoltsModel';
+import { IModels } from './models/Models';
+import { MainCamera } from './libs/gameObjects/MainCamera';
 
 interface IDispatchers {
     drag: DragDispatcher;
@@ -15,7 +18,7 @@ interface IDispatchers {
 }
 
 export class Game {
-    private _mainCamera: PerspectiveCamera;
+    private _mainCamera: MainCamera;
     private _canvas: HTMLCanvasElement;
     private _clock = new Clock;
     private _scene: StandardScene;
@@ -48,7 +51,7 @@ export class Game {
     private _gameUI!: IGameUI;
     private _dispatchers!: IDispatchers;
     private _baseGameController!: BaseGameController;
-    private _houseModel!: HouseModel;
+    private _models!: IModels;
 
     /**
      * @param {string} canvasName - ClassName or Id canvas dom
@@ -59,7 +62,7 @@ export class Game {
 
         const sizes = this._sizes;
         const cameraConfig = this._mainCameraConfig;
-        const camera = this._mainCamera = new PerspectiveCamera(
+        const camera = this._mainCamera = new MainCamera(
             cameraConfig.mainCameraViewAngle,
             sizes.width / sizes.height);
         camera.position.set(cameraConfig.x, cameraConfig.y, cameraConfig.z)
@@ -91,7 +94,14 @@ export class Game {
         this._dispatchers = this._createDispatchers(renderer);
 
         // CREATE MODELS
-        this._houseModel = new HouseModel();
+        const houseModel = new HouseModel();
+        houseModel.reset();
+        const boltsModel = new BoltsModel();
+        boltsModel.reset();
+        this._models = {
+            houseModel: houseModel,
+            boltsModel: boltsModel
+        }
 
         const assetsLoader = this._assetsLoader = new AssetsLoader();
         assetsLoader.assetsLoadComplete.add(this._onAssetsLoaded, this);
@@ -105,17 +115,17 @@ export class Game {
         const gameUI = this._buildGameObjects(this._scene, dispatchers);
 
         // CREATE CONTROLLERS
-        const baseGameController = this._baseGameController = new BaseGameController(this._houseModel);
+        const baseGameController = this._baseGameController = new BaseGameController(this._models);
 
         // START DISPATCH EVENTS
         dispatchers.drag.startDispatch();
-        dispatchers.raycaster.startDispatch((gameUI.bolts.slice() as any).concat(gameUI.houseElements.slice()));
+        dispatchers.raycaster.startDispatch((gameUI.bolts.slice() as any).concat(Array.from(gameUI.houseElements.values()).slice()));
 
         baseGameController.start({ gameUI });
     }
 
     private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): IGameUI {
-        const uiFactory = new GameUiObjectsFactory(this._assetsLoader);
+        const uiFactory = new GameUiObjectsFactory(this._assetsLoader, this._models);
         const gameUI = this._gameUI = uiFactory.buildGameUIObjects({
             scene,
             camera: this._mainCamera,
@@ -139,6 +149,7 @@ export class Game {
         const dt = this._clock.getDelta();
         this._physicWorld.step(1 / 60, dt, 3);
 
+        this._mainCamera.updateObject(dt)
         this._scene.updateObject(dt);
 
         const renderer = this._renderer;

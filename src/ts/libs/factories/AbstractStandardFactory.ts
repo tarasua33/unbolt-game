@@ -8,7 +8,7 @@ interface IBuildConfig
     parent: IGameGroup | Camera
 }
 
-export abstract class AbstractStandardFactory<T extends IGameObject | IGameObject[] = IGameObject> extends AbstractBaseFactory
+export abstract class AbstractStandardFactory<T extends IGameObject | IGameObject[] | Map<string, IGameObject> = IGameObject> extends AbstractBaseFactory
 {
     public abstract buildUi(params: IBuildConfig): T
 }

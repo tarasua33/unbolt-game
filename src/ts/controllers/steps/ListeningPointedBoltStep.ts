@@ -1,24 +1,21 @@
 import { BaseStep, BaseStepParams } from "../../libs/controllers/BaseStep";
-import { ElementIDs } from "../../models/HouseModel";
+import { Signal } from "../../libs/utils/Signal";
 import { Bolt } from "../../objects/Bolt";
-import { HouseElement } from "../../objects/HouseElement";
 
-interface IListeningPointedBoltStepParams extends BaseStepParams {
+export interface IListeningPointedBoltStepParams extends BaseStepParams {
     bolts: Bolt[];
-    houseElements: HouseElement[]
 }
 
-export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams = IListeningPointedBoltStepParams> extends BaseStep {
-    private _elementsMap!: Map<ElementIDs, HouseElement>;
+export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams = IListeningPointedBoltStepParams> extends BaseStep<IListeningPointedBoltStepParams> {
+    public unboltSignal = new Signal();
+    public unboltedElementSignal = new Signal();
+
+    private _boltsNum = 0;
 
     public start(params: T): void {
-        const { bolts, houseElements } = this._params = params;
+        const { bolts } = this._params = params;
 
-        const elementsMap: Map<ElementIDs, HouseElement> = this._elementsMap = new Map();
-        for (const element of houseElements) {
-            elementsMap.set(element.elementId, element);
-        }
-
+        this._boltsNum = bolts.length;
         for (const bolt of bolts) {
             bolt.raycasterSignal.add(this._onBoltPointed, this)
         }
@@ -26,24 +23,34 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
 
     private _onBoltPointed(bolt: Bolt): void {
         if (bolt.bolted) {
-            const blockerElementId = bolt.blockerElementId;
+            console.log("POINTED");
+            const preventerElementId = bolt.preventerElementId;
 
-            const houseModel = this._houseModel;
+            const houseModel = this._models.houseModel;
 
-            if (!blockerElementId || houseModel.boltedElements.indexOf(blockerElementId) === -1) {
+            if (!preventerElementId || !houseModel.boltedElements.has(preventerElementId)) {
+
+                this._boltsNum--;
+                this.unboltSignal.dispatch(bolt);
+
                 const config = houseModel.taskMap.get(bolt.boltedElementId);
                 config!.boltsNum--;
-                bolt.unbolt();
 
                 if (config!.boltsNum <= 0) {
-                    const element = this._elementsMap.get(bolt.boltedElementId)!
-
-                    const inx = houseModel.boltedElements.indexOf(element.elementId);
-                    houseModel.boltedElements.splice(inx, 1);
-
-                    element.applyPhysics();
+                    this.unboltedElementSignal.dispatch(bolt.boltedElementId);
                 }
             }
+
+            if (this._boltsNum === 0)
+            {
+                this._onComplete();
+            }
+        }
+    }
+
+    public forceComplete(): void {
+        for (const bolt of this._params.bolts) {
+            bolt.raycasterSignal.removeAll();
         }
     }
 }

@@ -18,3 +18,12 @@ export const BOLTS_COLORS_AMOUNT = [
     COLORS.yellow, COLORS.yellow, COLORS.yellow,
     COLORS.grey, COLORS.grey, COLORS.grey,
 ];
+
+export class BoltsModel {
+    public boltsColorsAmount!: string[];
+
+    public reset(): void
+    {
+        this.boltsColorsAmount = BOLTS_COLORS_AMOUNT.slice();
+    }
+}

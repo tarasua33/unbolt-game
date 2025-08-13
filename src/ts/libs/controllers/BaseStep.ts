@@ -1,19 +1,27 @@
-import { HouseModel } from "../../models/HouseModel";
+import { IModels } from "../../models/Models";
 import { Signal } from "../utils/Signal";
 
 export interface BaseStepParams {
 
 }
 
-export abstract class BaseStep<T extends BaseStepParams = BaseStepParams>
-{
+export abstract class BaseStep<T extends BaseStepParams = BaseStepParams> {
     public completeStep = new Signal();
-    
-    protected _params!: T;
-    protected _houseModel: HouseModel;
 
-    constructor(houseModel: HouseModel)
-    {
-        this._houseModel = houseModel;
+    protected _params!: T;
+    protected _models: IModels
+
+    constructor(models: IModels) {
+        this._models = models;
+    }
+
+    public abstract start(params: T): void
+
+    protected _onComplete(): void {
+        this.completeStep.dispatch(this);
+    }
+
+    public forceComplete(): void {
+        // pass
     }
 }

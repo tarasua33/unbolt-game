@@ -1,5 +1,5 @@
 import './style.css';
-import { Game } from "./ts/libs/Game";
+import { Game } from "./ts/Game";
 import Stats from 'stats.js';
 
 

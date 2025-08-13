@@ -3,7 +3,7 @@ import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFacto
 import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { ElementIDs } from "../models/HouseModel";
 import { Bolt, BoltConfig } from "../objects/Bolt";
-import { BOLTS_COLORS_AMOUNT, COLORS } from "../models/BoltsModel";
+import { COLORS } from "../models/BoltsModel";
 
 interface IParamsConfig {
     parent: IGameGroup;
@@ -116,7 +116,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
             // FLOOR_B
             {
                 boltedElementId: ElementIDs.FLOOR_B,
-                blockerElementId: ElementIDs.WALL_RSBW,
+                preventerElementId: ElementIDs.WALL_RSBW,
                 x: 1.89,
                 y: 0.05,
                 z: -1.025,
@@ -126,7 +126,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
             },
             {
                 boltedElementId: ElementIDs.FLOOR_B,
-                blockerElementId: ElementIDs.WALL_LSFW,
+                preventerElementId: ElementIDs.WALL_LSFW,
                 x: -1.9,
                 y: 0.05,
                 z: 0.885,
@@ -329,7 +329,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
             //FLOOR_TOP
             {
                 boltedElementId: ElementIDs.FLOOR_T,
-                blockerElementId: ElementIDs.ROOF_R,
+                preventerElementId: ElementIDs.ROOF_R,
                 x: 2.1,
                 y: 2.12,
                 z: -0.8,
@@ -339,7 +339,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
             },
             {
                 boltedElementId: ElementIDs.FLOOR_T,
-                blockerElementId: ElementIDs.ROOF_L,
+                preventerElementId: ElementIDs.ROOF_L,
                 x: -2.1,
                 y: 2.12,
                 z: 1.25,
@@ -397,7 +397,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
 
 
         const configs: BoltConfig[] = [];
-        const boltColorsAmount = BOLTS_COLORS_AMOUNT;
+        const boltColorsAmount = this._models.boltsModel.boltsColorsAmount;
         for (const pos of setUpPositionsConfigs) {
             const colorIndex = Math.floor(Math.random() * boltColorsAmount.length);
             const color = boltColorsAmount.splice(colorIndex, 1)[0]!;
@@ -424,7 +424,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
                     geometry: headGeometry,
                     material: headMaterialsMap.get(color)!
                 },
-                blockerElementId: pos.blockerElementId!
+                preventerElementId: pos.preventerElementId!
                 // gui: pos.gui!
             })
         }

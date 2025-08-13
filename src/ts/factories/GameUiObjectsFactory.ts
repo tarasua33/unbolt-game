@@ -3,41 +3,38 @@ import { AbstractBaseFactory } from "../libs/factories/AbstractBaseFactory";
 import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { DragDispatcher } from "../libs/utils/DragDispatcher";
 import { BoltsFactory } from "./BoltsFactory";
-import { HouseElementsFactory } from "./HouseElementsFactory";
+import { HouseElementsFactory, IHouseMap } from "./HouseElementsFactory";
 import { MainGroupFactory } from "./MainGroupFactory";
 import { MainGameGroup } from "../objects/MainGameGroup";
-import { HouseElement } from "../objects/HouseElement";
 import { Bolt } from "../objects/Bolt";
-// import { TransitionScreen } from "../objects/screens/TransitionScreen";
-// import { TransitionScreenFactory } from "./TransitionScreenFactory";
-import { Camera } from "three";
+import { TransitionScreen } from "../objects/screens/TransitionScreen";
+import { TransitionScreenFactory } from "./TransitionScreenFactory";
+import { MainCamera } from "../libs/gameObjects/MainCamera";
 
 export interface IGameUI {
     mainGroup: MainGameGroup;
-    houseElements: HouseElement[];
+    houseElements: IHouseMap;
     bolts: Bolt[];
-    // transitionScreen: TransitionScreen;
+    transitionScreen: TransitionScreen;
 }
 
-interface IGameFactoryConfig
-{
+interface IGameFactoryConfig {
     scene: IGameGroup;
     drag: DragDispatcher;
     physicWorld: World;
-    camera: Camera;
+    camera: MainCamera;
 }
 
 export class GameUiObjectsFactory extends AbstractBaseFactory {
     public buildGameUIObjects(config: IGameFactoryConfig): IGameUI {
-        // const {scene, drag, physicWorld, camera} = config;
-
-        const {scene, drag, physicWorld} = config;
+        const { scene, drag, physicWorld, camera } = config;
         const assetsLoader = this._assetsLoader;
+        const models = this._models;
 
-        const mainFactory = new MainGroupFactory(assetsLoader);
-        const houseElementsFactory = new HouseElementsFactory(assetsLoader);
-        const boltsFactory = new BoltsFactory(assetsLoader);
-        // const transitionScreenFactory = new TransitionScreenFactory(assetsLoader)
+        const mainFactory = new MainGroupFactory(assetsLoader, models);
+        const houseElementsFactory = new HouseElementsFactory(assetsLoader, models);
+        const boltsFactory = new BoltsFactory(assetsLoader, models);
+        const transitionScreenFactory = new TransitionScreenFactory(assetsLoader, models)
 
         const mainGroup = mainFactory.buildUi({ parent: scene, drag })
 
@@ -45,7 +42,7 @@ export class GameUiObjectsFactory extends AbstractBaseFactory {
             mainGroup: mainGroup,
             houseElements: houseElementsFactory.buildUi({ parent: mainGroup, physicWorld }),
             bolts: boltsFactory.buildUi({ parent: mainGroup }),
-            // transitionScreen: transitionScreenFactory.buildUi({parent: camera})
+            transitionScreen: transitionScreenFactory.buildUi({parent: camera})
         }
 
         return ui;

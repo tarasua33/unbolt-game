@@ -1,28 +1,93 @@
 import { IGameUI } from "../factories/GameUiObjectsFactory";
 import { BaseStep, BaseStepParams } from "../libs/controllers/BaseStep";
-import { HouseModel } from "../models/HouseModel";
-import { ListeningPointedBoltStep } from "./steps/ListeningPointedBoltStep";
+import { StepsManager } from "../libs/controllers/StepsManager";
+// import { ElementIDs } from "../models/HouseModel";
+import { IModels } from "../models/Models";
+// import { Bolt } from "../objects/Bolt";
+import { IListeningPointedBoltStepParams, ListeningPointedBoltStep } from "./steps/ListeningPointedBoltStep";
+import { ResetMainGameStep, ResetMainGameStepParams } from "./steps/transitions/ResetMainGameStep";
+import { ScreenFadeInStep, ScreenFadeInStepParams } from "./steps/transitions/ScreenFadeInStep";
+import { ScreenFadeOutStep, ScreenFadeOutStepParams } from "./steps/transitions/ScreenFadeOutStep";
 
-interface IControllerParams extends BaseStepParams{
+interface IControllerParams extends BaseStepParams {
     gameUI: IGameUI;
 }
 
-export class BaseGameController  extends BaseStep<IControllerParams> {
+export class BaseGameController extends BaseStep<IControllerParams> {
+    private _mng = new StepsManager();
     private _listeningPointedBoltStep: ListeningPointedBoltStep;
 
-    constructor(houseModel: HouseModel)
-    {
-        super(houseModel);
+    constructor(models: IModels) {
+        super(models);
 
-        this._listeningPointedBoltStep = new ListeningPointedBoltStep(houseModel);
+        this._listeningPointedBoltStep = new ListeningPointedBoltStep(models);
     }
 
     public start(params: IControllerParams): void {
-        const {gameUI} = this._params = params;
+        this._mng.completeSteps.addOnce(this._onComplete, this);
+        const models = this._models;
+        const { gameUI } = this._params = params;
 
-        this._listeningPointedBoltStep.start({
-            bolts: gameUI.bolts,
-            houseElements: gameUI.houseElements
-        })
+        const listeningPointedBoltStep = this._listeningPointedBoltStep;
+        const listeningPointedParams: IListeningPointedBoltStepParams = {bolts: gameUI.bolts}
+        // listeningPointedBoltStep.unboltedElementSignal.add(this._onUnboltedHouseElement, this);
+        // listeningPointedBoltStep.unboltSignal.add(this._onUnbolt, this);
+
+        const showScreenStep = new ScreenFadeInStep(models);
+        const showScreenParams: ScreenFadeInStepParams = {
+            screen: gameUI.transitionScreen
+        };
+
+        const resetMainGameStep = new ResetMainGameStep(models);
+        const resetGameParams: ResetMainGameStepParams = {
+            mainGameView: gameUI.mainGroup
+        };
+
+        const hideScreenStep = new ScreenFadeOutStep(models);
+        const hideScreenStepPrams: ScreenFadeOutStepParams = {
+            screen: gameUI.transitionScreen
+        }
+
+        this._mng.start([
+            {
+                consequents: [
+                    {
+                        step: showScreenStep,
+                        params: showScreenParams
+                    },
+                    {
+                        step: resetMainGameStep,
+                        params: resetGameParams
+                    },
+                    {
+                        step: hideScreenStep,
+                        params: hideScreenStepPrams
+                    }
+                ],
+                permanents: []
+            },
+            {
+                consequents: [],
+                permanents: [{
+                    step: listeningPointedBoltStep,
+                    params: listeningPointedParams
+                }]
+            }
+        ])
     }
+
+    protected _onComplete(): void {
+        console.warn("COMPLETE BASE GAME CONTROLLER");
+
+        super._onComplete();
+    }
+
+    // private _onUnbolt(bolt: Bolt): void {
+    //     this._mng.addDynamicStep(new )
+    // }
+
+    // private _onUnboltedHouseElement(id: ElementIDs): void
+    // {
+
+    // }
 }

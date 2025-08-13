@@ -10,9 +10,11 @@ interface IParamsConfig {
     physicWorld: World;
 }
 
-export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]> {
+export type IHouseMap = Map<ElementIDs, HouseElement>;
 
-    public buildUi(params: IParamsConfig): HouseElement[] {
+export class HouseElementsFactory extends AbstractStandardFactory<IHouseMap> {
+
+    public buildUi(params: IParamsConfig): IHouseMap {
         const { parent, physicWorld } = params;
         const assetsLoader = this._assetsLoader;
 
@@ -184,14 +186,14 @@ export class HouseElementsFactory extends AbstractStandardFactory<HouseElement[]
             }
         ]
 
-        const houseElements: HouseElement[] = [];
+        const houseElements: IHouseMap = new Map();
         for (const conf of configs) {
             const element = new HouseElement(conf);
             element.buildObject();
             parent.addObject(element)
 
             parent.houseElements.push(element);
-            houseElements.push(element);
+            houseElements.set(element.elementId, element);
         }
 
         return houseElements
