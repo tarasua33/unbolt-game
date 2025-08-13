@@ -7,7 +7,7 @@ interface HouseElementUnboltedStepParams extends BaseStepParams {
     id: ElementIDs;
 }
 
-export class HouseElementUnboltedStep<T extends HouseElementUnboltedStepParams = HouseElementUnboltedStepParams> extends BaseStep {
+export class HouseElementUnboltedStep<T extends HouseElementUnboltedStepParams = HouseElementUnboltedStepParams> extends BaseStep<HouseElementUnboltedStepParams> {
     public start({ elements, id }: T): void {
         this._models.houseModel.boltedElements.delete(id);
 

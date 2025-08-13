@@ -5,7 +5,7 @@ interface UnboltStepParams extends BaseStepParams {
     bolt: Bolt;
 }
 
-export class UnboltStep<T extends UnboltStepParams = UnboltStepParams> extends BaseStep {
+export class UnboltStep<T extends UnboltStepParams = UnboltStepParams> extends BaseStep<UnboltStepParams> {
     public start({ bolt }: T): void {
         bolt.completeUnboltedSignal.addOnce(this._onComplete, this);
         bolt.unbolt();

@@ -1,13 +1,17 @@
 import { IGameUI } from "../factories/GameUiObjectsFactory";
 import { BaseStep, BaseStepParams } from "../libs/controllers/BaseStep";
 import { StepsManager } from "../libs/controllers/StepsManager";
+import { ElementIDs } from "../models/HouseModel";
 // import { ElementIDs } from "../models/HouseModel";
 import { IModels } from "../models/Models";
+import { Bolt } from "../objects/Bolt";
+import { HouseElementUnboltedStep } from "./steps/HouseElementUnboltedStep";
 // import { Bolt } from "../objects/Bolt";
 import { IListeningPointedBoltStepParams, ListeningPointedBoltStep } from "./steps/ListeningPointedBoltStep";
 import { ResetMainGameStep, ResetMainGameStepParams } from "./steps/transitions/ResetMainGameStep";
 import { ScreenFadeInStep, ScreenFadeInStepParams } from "./steps/transitions/ScreenFadeInStep";
 import { ScreenFadeOutStep, ScreenFadeOutStepParams } from "./steps/transitions/ScreenFadeOutStep";
+import { UnboltStep } from "./steps/UnboltStep";
 
 interface IControllerParams extends BaseStepParams {
     gameUI: IGameUI;
@@ -29,9 +33,9 @@ export class BaseGameController extends BaseStep<IControllerParams> {
         const { gameUI } = this._params = params;
 
         const listeningPointedBoltStep = this._listeningPointedBoltStep;
-        const listeningPointedParams: IListeningPointedBoltStepParams = {bolts: gameUI.bolts}
-        // listeningPointedBoltStep.unboltedElementSignal.add(this._onUnboltedHouseElement, this);
-        // listeningPointedBoltStep.unboltSignal.add(this._onUnbolt, this);
+        const listeningPointedParams: IListeningPointedBoltStepParams = { bolts: gameUI.bolts }
+        listeningPointedBoltStep.unboltedElementSignal.add(this._onUnboltedHouseElement, this);
+        listeningPointedBoltStep.unboltSignal.add(this._onUnbolt, this);
 
         const showScreenStep = new ScreenFadeInStep(models);
         const showScreenParams: ScreenFadeInStepParams = {
@@ -82,12 +86,16 @@ export class BaseGameController extends BaseStep<IControllerParams> {
         super._onComplete();
     }
 
-    // private _onUnbolt(bolt: Bolt): void {
-    //     this._mng.addDynamicStep(new )
-    // }
+    private _onUnbolt(bolt: Bolt): void {
+        this._mng.addDynamicStep(new UnboltStep(this._models), {
+            bolt
+        });
+    }
 
-    // private _onUnboltedHouseElement(id: ElementIDs): void
-    // {
-
-    // }
+    private _onUnboltedHouseElement(id: ElementIDs): void {
+        this._mng.addDynamicStep(new HouseElementUnboltedStep(this._models), {
+            id,
+            elements: this._params.gameUI.houseElements
+        });
+    }
 }
