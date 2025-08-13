@@ -1,12 +1,11 @@
 import { IGameUI } from "../factories/GameUiObjectsFactory";
 import { BaseStep, BaseStepParams } from "../libs/controllers/BaseStep";
+import { Sequence } from "../libs/controllers/Sequence";
 import { StepsManager } from "../libs/controllers/StepsManager";
 import { ElementIDs } from "../models/HouseModel";
-// import { ElementIDs } from "../models/HouseModel";
 import { IModels } from "../models/Models";
 import { Bolt } from "../objects/Bolt";
 import { HouseElementUnboltedStep } from "./steps/HouseElementUnboltedStep";
-// import { Bolt } from "../objects/Bolt";
 import { IListeningPointedBoltStepParams, ListeningPointedBoltStep } from "./steps/ListeningPointedBoltStep";
 import { ResetMainGameStep, ResetMainGameStepParams } from "./steps/transitions/ResetMainGameStep";
 import { ScreenFadeInStep, ScreenFadeInStepParams } from "./steps/transitions/ScreenFadeInStep";
@@ -37,6 +36,9 @@ export class BaseGameController extends BaseStep<IControllerParams> {
         listeningPointedBoltStep.unboltedElementSignal.add(this._onUnboltedHouseElement, this);
         listeningPointedBoltStep.unboltSignal.add(this._onUnbolt, this);
 
+        const showGameSequence = new Sequence();
+        const playGameSequence = new Sequence();
+
         const showScreenStep = new ScreenFadeInStep(models);
         const showScreenParams: ScreenFadeInStepParams = {
             screen: gameUI.transitionScreen
@@ -52,31 +54,15 @@ export class BaseGameController extends BaseStep<IControllerParams> {
             screen: gameUI.transitionScreen
         }
 
+        showGameSequence.addConsequents(showScreenStep, showScreenParams);
+        showGameSequence.addConsequents(resetMainGameStep, resetGameParams);
+        showGameSequence.addConsequents(hideScreenStep, hideScreenStepPrams);
+
+        playGameSequence.addPermanent(listeningPointedBoltStep, listeningPointedParams);
+
         this._mng.start([
-            {
-                consequents: [
-                    {
-                        step: showScreenStep,
-                        params: showScreenParams
-                    },
-                    {
-                        step: resetMainGameStep,
-                        params: resetGameParams
-                    },
-                    {
-                        step: hideScreenStep,
-                        params: hideScreenStepPrams
-                    }
-                ],
-                permanents: []
-            },
-            {
-                consequents: [],
-                permanents: [{
-                    step: listeningPointedBoltStep,
-                    params: listeningPointedParams
-                }]
-            }
+            showGameSequence,
+            playGameSequence
         ])
     }
 

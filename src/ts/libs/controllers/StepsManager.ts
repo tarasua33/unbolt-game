@@ -1,21 +1,11 @@
 import { BaseStep, BaseStepParams } from "./BaseStep"
 import { Signal } from "../utils/Signal";
-
-interface IStepAndParams {
-    step: BaseStep;
-    params: BaseStepParams;
-}
-
-interface ISequence {
-    permanents: IStepAndParams[];
-    consequents: IStepAndParams[];
-}
+import { ISequence, IStepAndParams } from "./Sequence";
 
 export class StepsManager {
     public completeSteps = new Signal();
 
     private _sequences?: ISequence[];
-    // private _currentSequence?: ISequence | undefined;
 
     private _consequentsSteps: IStepAndParams[] = [];
     private _permanentsSteps: IStepAndParams[] = [];

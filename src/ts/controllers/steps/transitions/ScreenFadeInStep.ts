@@ -5,7 +5,7 @@ export interface ScreenFadeInStepParams extends BaseStepParams {
     screen: TransitionScreen;
 }
 
-export class ScreenFadeInStep<T extends ScreenFadeInStepParams = ScreenFadeInStepParams> extends BaseStep<T> {
+export class ScreenFadeInStep<T extends ScreenFadeInStepParams = ScreenFadeInStepParams> extends BaseStep<ScreenFadeInStepParams> {
     public start(params: T): void {
         const { screen } = params;
         this._params = params;

@@ -5,7 +5,7 @@ export interface ResetMainGameStepParams extends BaseStepParams {
     mainGameView: MainGameGroup;
 }
 
-export class ResetMainGameStep<T extends ResetMainGameStepParams = ResetMainGameStepParams> extends BaseStep {
+export class ResetMainGameStep<T extends ResetMainGameStepParams = ResetMainGameStepParams> extends BaseStep<ResetMainGameStepParams> {
     public start({ mainGameView }: T): void {
         mainGameView.reset();
         mainGameView.visible = true;
