@@ -1,18 +1,22 @@
 import MiniSignal from 'mini-signals';
 
-export class Signal<T extends any[]> {
+export class Signal {
     private _signal = new MiniSignal();
-    private _bindings = new Map<T, any>();
-    private _bindingsOnce = new Map<T, any>();
+    private _bindings = new Map<Function, any>();
+    private _bindingsOnce = new Map<Function, any>();
 
-    public add(listener: any): void {
-        const binding = this._signal.add(listener);
-        this._bindings.set(listener, binding);
+    public add(listener: Function, context: Object): void {
+        const bind = listener.bind(context);
+
+        const binding = this._signal.add(bind);
+        this._bindings.set(bind, binding);
     }
 
-    public addOnce(listener: any): void {
-        const binding = this._signal.add(listener);
-        this._bindings.set(listener, binding);
+    public addOnce(listener: Function, context: Object): void {
+        const bind = listener.bind(context);
+        
+        const binding = this._signal.add(bind);
+        this._bindings.set(bind, binding);
     }
 
     public remove(listener: any): void {
@@ -54,7 +58,7 @@ export class Signal<T extends any[]> {
         }
     }
 
-    public dispatch(...args: T): void {
+    public dispatch(...args: any[]): void {
         this._signal.dispatch(...args);
         this._removeAllOnce();
     }

@@ -94,7 +94,7 @@ export class Game {
         this._houseModel = new HouseModel();
 
         const assetsLoader = this._assetsLoader = new AssetsLoader();
-        assetsLoader.assetsLoadComplete.add(this._onAssetsLoaded.bind(this));
+        assetsLoader.assetsLoadComplete.add(this._onAssetsLoaded, this);
         assetsLoader.loadAssets();
     }
 

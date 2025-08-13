@@ -9,7 +9,6 @@ interface IListeningPointedBoltStepParams extends BaseStepParams {
 }
 
 export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams = IListeningPointedBoltStepParams> extends BaseStep {
-    // protected _params: T;
     private _elementsMap!: Map<ElementIDs, HouseElement>;
 
     public start(params: T): void {
@@ -21,7 +20,7 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
         }
 
         for (const bolt of bolts) {
-            bolt.raycasterSignal.add(this._onBoltPointed.bind(this))
+            bolt.raycasterSignal.add(this._onBoltPointed, this)
         }
     }
 
@@ -32,7 +31,6 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
             const houseModel = this._houseModel;
 
             if (!blockerElementId || houseModel.boltedElements.indexOf(blockerElementId) === -1) {
-                // taskMap.get(bolt.boltedElementId)
                 const config = houseModel.taskMap.get(bolt.boltedElementId);
                 config!.boltsNum--;
                 bolt.unbolt();

@@ -57,7 +57,7 @@ export class Bolt extends StandardGroup<BoltConfig> {
 
         const head = new StandardMesh(headConfig);
         head.buildObject();
-        head.raycasterSignal.add(this._onPointed.bind(this));
+        head.raycasterSignal.add(this._onPointed, this);
         animationGroup.addObject(head);
 
         this._tweenGroup = new Group();

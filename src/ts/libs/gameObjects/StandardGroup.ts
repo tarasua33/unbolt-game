@@ -31,6 +31,10 @@ export class StandardGroup<T extends StandardGroupConfig = StandardGroupConfig> 
 
     public reset(): void {
         this._setBaseConfig();
+
+        for (const child of this._gameObjects) {
+            child.reset();
+        }
     }
 
     private _setBaseConfig(): void {

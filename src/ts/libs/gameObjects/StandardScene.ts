@@ -19,4 +19,10 @@ export class StandardScene extends Scene implements IGameGroup {
             child.updateObject(dt)
         }
     }
+
+    public reset(): void {
+        for (const child of this._gameObjects) {
+            child.reset();
+        }
+    }
 }
