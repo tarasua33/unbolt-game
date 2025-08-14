@@ -41,16 +41,26 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
                 }
             }
 
-            if (this._boltsNum === 0)
-            {
+            if (this._boltsNum === 0) {
                 this._onComplete();
             }
         }
     }
 
-    public forceComplete(): void {
+    private _removeBoltsListeners(): void {
         for (const bolt of this._params.bolts) {
             bolt.raycasterSignal.removeAll();
         }
+    }
+
+    public forceComplete(): void {
+        this._removeBoltsListeners();
+
+        this._onComplete();
+    }
+
+    protected _onComplete(): void {
+        this._removeBoltsListeners();
+        super._onComplete();
     }
 }

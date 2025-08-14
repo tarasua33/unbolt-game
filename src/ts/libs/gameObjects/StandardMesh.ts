@@ -47,12 +47,17 @@ export class StandardMesh<T extends StandardMeshConfig = StandardMeshConfig> ext
         if (typeof x === "number") this.position.x = x;
         if (typeof y === "number") this.position.y = y;
         if (typeof z === "number") this.position.z = z;
+
+        this.rotation.set(0, 0, 0);
+        this.quaternion.set(0, 0, 0, 1);
         if (typeof rotX === "number") this.rotation.x = rotX;
         if (typeof rotY === "number") this.rotation.y = rotY;
         if (typeof rotZ === "number") this.rotation.z = rotZ;
+
         if (typeof scaleX === "number") this.scale.x = scaleX;
         if (typeof scaleY === "number") this.scale.y = scaleY;
         if (typeof scaleZ === "number") this.scale.z = scaleZ;
+
         if (typeof visible === "boolean") this.visible = visible;
     }
 

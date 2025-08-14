@@ -84,8 +84,10 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
         const body = this._groupBody = new Body({ mass: initialMas });
         const { x, y, z } = this.position;
         body.position.set(x, y, z);
+
         const { x: qX, y: qY, z: qZ, w } = this.quaternion;
         body.quaternion.set(qX, qY, qZ, w);
+
         body.addShape(shape);
         physicWorld.addBody(body);
 
@@ -97,7 +99,7 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
         body.mass = BASE_MASS;
 
         if (this._elementId === ElementIDs.FLOOR_T) {
-            body.velocity.set(3.5, 3.5, 0);
+            body.velocity.set(4.5, 4.5, 0);
         }
         else {
             const { x, z } = this.position;
@@ -138,8 +140,8 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
 
         const body = this._groupBody;
         if (body) {
-            this.position.copy(this._groupBody.position);
-            this.quaternion.copy(this._groupBody.quaternion);
+            this.position.copy(body.position);
+            this.quaternion.copy(body.quaternion);
 
             if (this.position.y < MIN_GRAVITY_Y && body.mass > 0) {
 
@@ -161,8 +163,13 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
 
         const { x, y, z } = this.position;
         body.position.set(x, y, z);
-        const { x: qX, y: qY, z: qZ, w } = this.quaternion;
-        body.quaternion.set(qX, qY, qZ, w);
+
+        body.quaternion.set(
+            this.quaternion.x,
+            this.quaternion.y,
+            this.quaternion.z,
+            this.quaternion.w
+        );
 
         body.mass = 0;
         body.velocity.set(0, 0, 0);

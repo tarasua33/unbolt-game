@@ -75,8 +75,6 @@ export class AssetsLoader {
     }
 
     private _onHouseElementsLoaded(gltf: any): void {
-        console.log(gltf);
-
         const elements = [
             { type: ElementTypes.WINDOW, idx: 0 },
             { type: ElementTypes.WOOL_F, idx: 1 },
@@ -97,7 +95,6 @@ export class AssetsLoader {
             box.getCenter(center);
             model.position.sub(center);
 
-            console.log(model);
             counter++
         }
 

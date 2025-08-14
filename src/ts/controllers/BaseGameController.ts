@@ -72,6 +72,9 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 
     protected _onComplete(): void {
         console.warn("COMPLETE BASE GAME CONTROLLER");
+        const listeningPointedBoltStep = this._listeningPointedBoltStep;
+        listeningPointedBoltStep.unboltedElementSignal.remove(this._onUnboltedHouseElement);
+        listeningPointedBoltStep.unboltSignal.remove(this._onUnbolt);
 
         super._onComplete();
     }

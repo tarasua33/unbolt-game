@@ -90,7 +90,7 @@ export class StepsManager {
             const params = consequentsSteps[stepIndex]!.params;
 
             console.log(step);
-            
+
             step.completeStepSignal.addOnce(this._onConsequentStepComplete, this);
             step.start(params);
         }
@@ -117,12 +117,14 @@ export class StepsManager {
 
     private _onComplete(): void {
         this._sequences = [];
+        this._consequentsSteps = [];
+        this._permanentsSteps = [];
 
         for (const step of this._dynamicSteps) {
             step.forceComplete();
         }
         this._dynamicSteps.clear();
-
+        
         this.completeSteps.dispatch();
     }
 
@@ -136,5 +138,7 @@ export class StepsManager {
         for (const step of this._permanentsSteps) {
             step.step.forceComplete();
         }
+
+        this._onComplete();
     }
 }
