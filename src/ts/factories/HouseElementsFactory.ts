@@ -1,9 +1,9 @@
 import { BoxGeometry, MeshStandardMaterial, RepeatWrapping } from "three";
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
 import { ElementIDs } from "../models/HouseModel";
-import { HouseElement, HouseElementConfig } from "../objects/HouseElement";
+import { HouseElement, HouseElementConfig } from "../objects/gameObjects/HouseElement";
 import { World } from "cannon-es";
-import { MainGameGroup } from "../objects/MainGameGroup";
+import { MainGameGroup } from "../objects/gameObjects/MainGameGroup";
 
 interface IParamsConfig {
     parent: MainGameGroup;

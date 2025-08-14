@@ -1,6 +1,6 @@
 import { BaseStep, BaseStepParams } from "../../libs/controllers/BaseStep";
 import { Signal } from "../../libs/utils/Signal";
-import { Bolt } from "../../objects/Bolt";
+import { Bolt } from "../../objects/gameObjects/Bolt";
 
 export interface IListeningPointedBoltStepParams extends BaseStepParams {
     bolts: Bolt[];

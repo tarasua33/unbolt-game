@@ -1,8 +1,13 @@
 import { BaseStep, BaseStepParams } from "../../../libs/controllers/BaseStep";
-import { TransitionScreen } from "../../../objects/screens/TransitionScreen";
+import { Signal } from "../../../libs/utils/Signal";
+
+export interface IFadeIn {
+    completeAnimationSignal: Signal;
+    show(): void;
+}
 
 export interface ScreenFadeInStepParams extends BaseStepParams {
-    screen: TransitionScreen;
+    screen: IFadeIn;
 }
 
 export class ScreenFadeInStep<T extends ScreenFadeInStepParams = ScreenFadeInStepParams> extends BaseStep<ScreenFadeInStepParams> {

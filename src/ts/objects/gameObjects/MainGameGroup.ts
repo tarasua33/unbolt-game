@@ -1,4 +1,4 @@
-import { DragGroup, DragGroupConfig } from "../libs/gameObjects/DragGroup";
+import { DragGroup, DragGroupConfig } from "../../libs/gameObjects/DragGroup";
 import { HouseElement } from "./HouseElement";
 
 export interface MainGameGroupConfig extends DragGroupConfig {

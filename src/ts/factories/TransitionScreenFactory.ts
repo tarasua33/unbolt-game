@@ -26,7 +26,7 @@ export class TransitionScreenFactory extends AbstractStandardFactory<TransitionS
                 )),
                 transparent: true
             }),
-            geometry: new PlaneGeometry(3, 3,),
+            geometry: new PlaneGeometry(3, 3),
             z: -2,
             visible: false
         }

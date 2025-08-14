@@ -11,6 +11,9 @@ import { HouseModel } from './models/HouseModel';
 import { BoltsModel } from './models/BoltsModel';
 import { IModels } from './models/Models';
 import { MainCamera } from './libs/gameObjects/MainCamera';
+import { LoadingScreen } from './objects/screens/LoadingScreen';
+import { LoadingScreenFactory } from './factories/LoadingScreenFactory';
+import { LoadingScreenController } from './controllers/LoadingScreenController';
 
 interface IDispatchers {
     drag: DragDispatcher;
@@ -23,7 +26,7 @@ export class Game {
     private _clock = new Clock;
     private _scene: StandardScene;
     private _renderer: WebGLRenderer;
-    private _assetsLoader: AssetsLoader;
+    private _assetsLoader!: AssetsLoader;
     private _physicWorld!: World;
     private _gravityY = -9.8;
 
@@ -49,6 +52,7 @@ export class Game {
     private _bgColor = "#AFEEEE";
 
     private _gameUI!: IGameUI;
+    private _loadingScreen!: LoadingScreen;
     private _dispatchers!: IDispatchers;
     private _baseGameController!: BaseGameController;
     private _models!: IModels;
@@ -83,28 +87,44 @@ export class Game {
         renderer.setSize(sizes.width, sizes.height);
         renderer.render(scene, camera);
 
-        // PHYSIC WORLD
-        const world = this._physicWorld = new World();
-        world.gravity.set(0, this._gravityY, 0);
-
         // FPS CLOCK
         this._clock = new Clock();
 
-        // CREATE DISPATCHERS
-        this._dispatchers = this._createDispatchers(renderer);
+        this._createGameWorld(renderer);
+    }
 
+    private _createGameWorld(renderer: WebGLRenderer): void {
         // CREATE MODELS
         const houseModel = new HouseModel();
         houseModel.reset();
         const boltsModel = new BoltsModel();
         boltsModel.reset();
-        this._models = {
+        const models = this._models = {
             houseModel: houseModel,
             boltsModel: boltsModel
         }
 
+        // PHYSIC WORLD
+        const world = this._physicWorld = new World();
+        world.gravity.set(0, this._gravityY, 0);
+
+        // CREATE DISPATCHERS
+        this._dispatchers = this._createDispatchers(renderer);
+
+        // CREATE CONTROLLERS
+        this._baseGameController = new BaseGameController(this._models);
+        const loadingScreenController = new LoadingScreenController(models);
+
+        // LOADING SCREEN
+        const loadingScreen = this._loadingScreen = new LoadingScreenFactory().buildUi({ parent: this._mainCamera });
+
+        // LOAD ASSETS
         const assetsLoader = this._assetsLoader = new AssetsLoader();
-        assetsLoader.assetsLoadComplete.add(this._onAssetsLoaded, this);
+
+        loadingScreenController.completeStepSignal.addOnce(this._onAssetsLoaded, this)
+        loadingScreenController.start({ view: loadingScreen, assetsLoader });
+
+        // assetsLoader.assetsLoadComplete.add(this._onAssetsLoaded, this);
         assetsLoader.loadAssets();
     }
 
@@ -114,14 +134,12 @@ export class Game {
         // CREATE UI ELEMENTS
         const gameUI = this._buildGameObjects(this._scene, dispatchers);
 
-        // CREATE CONTROLLERS
-        const baseGameController = this._baseGameController = new BaseGameController(this._models);
-
         // START DISPATCH EVENTS
         dispatchers.drag.startDispatch();
         dispatchers.raycaster.startDispatch((gameUI.bolts.slice() as any).concat(Array.from(gameUI.houseElements.values()).slice()));
 
-        baseGameController.start({ gameUI });
+        const baseGameController = this._baseGameController;
+        baseGameController.start({ gameUI, loadingScreen: this._loadingScreen });
     }
 
     private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): IGameUI {

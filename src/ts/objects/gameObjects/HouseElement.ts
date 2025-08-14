@@ -1,9 +1,9 @@
-import { StandardGroup, StandardGroupConfig } from "../libs/gameObjects/StandardGroup";
-import { ElementIDs } from "../models/HouseModel";
+import { StandardGroup, StandardGroupConfig } from "../../libs/gameObjects/StandardGroup";
+import { ElementIDs } from "../../models/HouseModel";
 // import { Object3D, BufferGeometry, Material } from 'three';
 import { Object3D, BufferGeometry, Material, Box3, Vector3 } from 'three';
 import * as dat from "lil-gui";
-import { StandardMesh } from "../libs/gameObjects/StandardMesh";
+import { StandardMesh } from "../../libs/gameObjects/StandardMesh";
 import { Body, Box, Vec3, World } from "cannon-es";
 
 export interface HouseElementConfig extends StandardGroupConfig {

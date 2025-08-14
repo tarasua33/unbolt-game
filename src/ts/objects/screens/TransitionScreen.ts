@@ -1,3 +1,5 @@
+import { IFadeIn } from "../../controllers/steps/transitions/ScreenFadeInStep";
+import { IFadeOut } from "../../controllers/steps/transitions/ScreenFadeOutStep";
 import { StandardMesh, StandardMeshConfig } from "../../libs/gameObjects/StandardMesh";
 import { Signal } from "../../libs/utils/Signal";
 import gsap from "gsap";
@@ -6,7 +8,7 @@ export interface TransitionScreenConfig extends StandardMeshConfig { }
 
 const SHOW_SCALE = 4;
 
-export class TransitionScreen extends StandardMesh<TransitionScreenConfig> {
+export class TransitionScreen extends StandardMesh<TransitionScreenConfig> implements IFadeIn, IFadeOut {
     public completeAnimationSignal = new Signal();
     private _isFadeIn = true;
 
@@ -37,7 +39,7 @@ export class TransitionScreen extends StandardMesh<TransitionScreenConfig> {
         gsap.to(this,
             {
                 ["progress"]: 1,
-                duration: this._isFadeIn ? 1 : 0.75,
+                duration: this._isFadeIn ? 0.5 : 0.35,
                 ease: this._isFadeIn ? "expo.inOut" : "sine.in",
                 overwrite: true,
                 onComplete: this._onCompleteAnimation.bind(this)
@@ -62,8 +64,9 @@ export class TransitionScreen extends StandardMesh<TransitionScreenConfig> {
     }
 
     private _onCompleteAnimation(): void {
-        if (this._progress > 0.5) {
-            this.completeAnimationSignal.dispatch();
+        if (!this._isFadeIn) {
+            this.visible = false;
         }
+        this.completeAnimationSignal.dispatch();
     }
 }

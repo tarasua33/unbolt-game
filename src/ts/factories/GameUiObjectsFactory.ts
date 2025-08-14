@@ -5,11 +5,11 @@ import { DragDispatcher } from "../libs/utils/DragDispatcher";
 import { BoltsFactory } from "./BoltsFactory";
 import { HouseElementsFactory, IHouseMap } from "./HouseElementsFactory";
 import { MainGroupFactory } from "./MainGroupFactory";
-import { MainGameGroup } from "../objects/MainGameGroup";
-import { Bolt } from "../objects/Bolt";
 import { TransitionScreen } from "../objects/screens/TransitionScreen";
 import { TransitionScreenFactory } from "./TransitionScreenFactory";
 import { MainCamera } from "../libs/gameObjects/MainCamera";
+import { MainGameGroup } from "../objects/gameObjects/MainGameGroup";
+import { Bolt } from "../objects/gameObjects/Bolt";
 
 export interface IGameUI {
     mainGroup: MainGameGroup;

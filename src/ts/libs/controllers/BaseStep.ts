@@ -6,7 +6,7 @@ export interface BaseStepParams {
 }
 
 export abstract class BaseStep<T extends BaseStepParams = BaseStepParams> {
-    public completeStep = new Signal();
+    public completeStepSignal = new Signal();
 
     protected _params!: T;
     protected _models: IModels
@@ -18,7 +18,7 @@ export abstract class BaseStep<T extends BaseStepParams = BaseStepParams> {
     public abstract start(params: T): void
 
     protected _onComplete(): void {
-        this.completeStep.dispatch(this);
+        this.completeStepSignal.dispatch(this);
     }
 
     public forceComplete(): void {

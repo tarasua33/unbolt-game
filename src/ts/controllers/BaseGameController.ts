@@ -1,10 +1,10 @@
 import { IGameUI } from "../factories/GameUiObjectsFactory";
-import { BaseStep, BaseStepParams } from "../libs/controllers/BaseStep";
+import { Controller, IControllerParams } from "../libs/controllers/Controller";
 import { Sequence } from "../libs/controllers/Sequence";
-import { StepsManager } from "../libs/controllers/StepsManager";
 import { ElementIDs } from "../models/HouseModel";
 import { IModels } from "../models/Models";
-import { Bolt } from "../objects/Bolt";
+import { Bolt } from "../objects/gameObjects/Bolt";
+import { LoadingScreen } from "../objects/screens/LoadingScreen";
 import { HouseElementUnboltedStep } from "./steps/HouseElementUnboltedStep";
 import { IListeningPointedBoltStepParams, ListeningPointedBoltStep } from "./steps/ListeningPointedBoltStep";
 import { ResetMainGameStep, ResetMainGameStepParams } from "./steps/transitions/ResetMainGameStep";
@@ -12,12 +12,12 @@ import { ScreenFadeInStep, ScreenFadeInStepParams } from "./steps/transitions/Sc
 import { ScreenFadeOutStep, ScreenFadeOutStepParams } from "./steps/transitions/ScreenFadeOutStep";
 import { UnboltStep } from "./steps/UnboltStep";
 
-interface IControllerParams extends BaseStepParams {
+interface IControllerBaseParams extends IControllerParams {
     gameUI: IGameUI;
+    loadingScreen: LoadingScreen;
 }
 
-export class BaseGameController extends BaseStep<IControllerParams> {
-    private _mng = new StepsManager();
+export class BaseGameController extends Controller<IControllerBaseParams> {
     private _listeningPointedBoltStep: ListeningPointedBoltStep;
 
     constructor(models: IModels) {
@@ -26,40 +26,44 @@ export class BaseGameController extends BaseStep<IControllerParams> {
         this._listeningPointedBoltStep = new ListeningPointedBoltStep(models);
     }
 
-    public start(params: IControllerParams): void {
-        this._mng.completeSteps.addOnce(this._onComplete, this);
+    public start(params: IControllerBaseParams): void {
         const models = this._models;
-        const { gameUI } = this._params = params;
+        const { gameUI, loadingScreen } = this._params = params;
+
+        // SHOW GAME
+        // Consequents
+        const showGameSequence = new Sequence();
+        const showScreenStep = new ScreenFadeInStep(models);
+        const showScreenParams: ScreenFadeInStepParams = {
+            screen: gameUI.transitionScreen
+        };
+        showGameSequence.addConsequents(showScreenStep, showScreenParams);
+
+        const resetMainGameStep = new ResetMainGameStep(models);
+        const resetGameParams: ResetMainGameStepParams = {
+            mainGameView: gameUI.mainGroup,
+            loadingScreen
+        };
+        showGameSequence.addConsequents(resetMainGameStep, resetGameParams);
+
+        const hideScreenStep = new ScreenFadeOutStep(models);
+        const hideScreenStepPrams: ScreenFadeOutStepParams = {
+            screen: gameUI.transitionScreen
+        }
+        showGameSequence.addConsequents(hideScreenStep, hideScreenStepPrams);
+
+        // PLAY GAME
+        // Permanent
+        const playGameSequence = new Sequence();
 
         const listeningPointedBoltStep = this._listeningPointedBoltStep;
         const listeningPointedParams: IListeningPointedBoltStepParams = { bolts: gameUI.bolts }
         listeningPointedBoltStep.unboltedElementSignal.add(this._onUnboltedHouseElement, this);
         listeningPointedBoltStep.unboltSignal.add(this._onUnbolt, this);
 
-        const showGameSequence = new Sequence();
-        const playGameSequence = new Sequence();
-
-        const showScreenStep = new ScreenFadeInStep(models);
-        const showScreenParams: ScreenFadeInStepParams = {
-            screen: gameUI.transitionScreen
-        };
-
-        const resetMainGameStep = new ResetMainGameStep(models);
-        const resetGameParams: ResetMainGameStepParams = {
-            mainGameView: gameUI.mainGroup
-        };
-
-        const hideScreenStep = new ScreenFadeOutStep(models);
-        const hideScreenStepPrams: ScreenFadeOutStepParams = {
-            screen: gameUI.transitionScreen
-        }
-
-        showGameSequence.addConsequents(showScreenStep, showScreenParams);
-        showGameSequence.addConsequents(resetMainGameStep, resetGameParams);
-        showGameSequence.addConsequents(hideScreenStep, hideScreenStepPrams);
-
         playGameSequence.addPermanent(listeningPointedBoltStep, listeningPointedParams);
 
+        // START
         this._mng.start([
             showGameSequence,
             playGameSequence

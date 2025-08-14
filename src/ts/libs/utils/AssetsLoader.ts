@@ -1,6 +1,6 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Signal } from "./Signal";
-import { Box3, Object3D, Texture, TextureLoader, Vector3 } from 'three';
+import { Box3, LoadingManager, Object3D, Texture, TextureLoader, Vector3 } from 'three';
 import { ElementTypes } from "../../models/HouseModel";
 
 interface IAssets {
@@ -9,7 +9,9 @@ interface IAssets {
 }
 
 export class AssetsLoader {
-    public assetsLoadComplete = new Signal()
+    public assetsLoadComplete = new Signal();
+    public progressLoadSignal = new Signal();
+
     public assets: IAssets = {
         gltf: {
             [ElementTypes.WINDOW]: undefined,
@@ -26,13 +28,17 @@ export class AssetsLoader {
     private _loadCounter = 0;
     private _gltfLoader: GLTFLoader;
     private _textureLoader: TextureLoader;
+    private _manager!: LoadingManager;
 
     constructor() {
-        this._gltfLoader = new GLTFLoader();
-        this._textureLoader = new TextureLoader()
+        const manager = this._manager = new LoadingManager();
+        this._gltfLoader = new GLTFLoader(manager);
+        this._textureLoader = new TextureLoader(manager);
     }
 
     public loadAssets(): void {
+        this._manager.onProgress = this._onProgressLoad.bind(this);
+
         this._loadCounter = 4;
 
         const gltfLoader = this._gltfLoader;
@@ -109,5 +115,12 @@ export class AssetsLoader {
         else {
             console.error("Assets not loaded")
         }
+    }
+
+    private _onProgressLoad(url: string, itemsLoaded: number, itemsTotal: number): void
+    {
+            const value = itemsLoaded / itemsTotal;
+
+            this.progressLoadSignal.dispatch(value);
     }
 }

@@ -2,7 +2,7 @@ import { CylinderGeometry, MeshPhongMaterial } from "three";
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
 import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { ElementIDs } from "../models/HouseModel";
-import { Bolt, BoltConfig } from "../objects/Bolt";
+import { Bolt, BoltConfig } from "../objects/gameObjects/Bolt";
 import { COLORS } from "../models/BoltsModel";
 
 interface IParamsConfig {

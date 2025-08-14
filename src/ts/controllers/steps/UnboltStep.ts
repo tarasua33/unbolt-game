@@ -1,5 +1,5 @@
 import { BaseStep, BaseStepParams } from "../../libs/controllers/BaseStep";
-import { Bolt } from "../../objects/Bolt";
+import { Bolt } from "../../objects/gameObjects/Bolt";
 
 interface UnboltStepParams extends BaseStepParams {
     bolt: Bolt;

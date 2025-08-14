@@ -1,7 +1,7 @@
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
 import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { DragDispatcher } from '../libs/utils/DragDispatcher';
-import { MainGameGroup, MainGameGroupConfig } from '../objects/MainGameGroup';
+import { MainGameGroup, MainGameGroupConfig } from '../objects/gameObjects/MainGameGroup';
 
 interface IParamsConfig {
     parent: IGameGroup;
