@@ -39,7 +39,7 @@ export class AssetsLoader {
     public loadAssets(): void {
         this._manager.onProgress = this._onProgressLoad.bind(this);
 
-        this._loadCounter = 4;
+        this._loadCounter = 5;
 
         const gltfLoader = this._gltfLoader;
         const textureLoader = this._textureLoader;
@@ -67,6 +67,14 @@ export class AssetsLoader {
 
         textureLoader.load("/bolt_head.jpg", (data: Texture) => {
             this.assets.textures["boltHead"] = data;
+
+            if (data) {
+                this._onLoadAsset();
+            }
+        })
+
+        textureLoader.load("/chest.png", (data: Texture) => {
+            this.assets.textures["chest"] = data;
 
             if (data) {
                 this._onLoadAsset();
@@ -114,10 +122,9 @@ export class AssetsLoader {
         }
     }
 
-    private _onProgressLoad(url: string, itemsLoaded: number, itemsTotal: number): void
-    {
-            const value = itemsLoaded / itemsTotal;
+    private _onProgressLoad(url: string, itemsLoaded: number, itemsTotal: number): void {
+        const value = itemsLoaded / itemsTotal;
 
-            this.progressLoadSignal.dispatch(value);
+        this.progressLoadSignal.dispatch(value);
     }
 }

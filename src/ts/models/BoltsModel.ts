@@ -20,10 +20,11 @@ export const BOLTS_COLORS_AMOUNT = [
 ];
 
 export class BoltsModel {
+    public readonly chestsNumber = 3;
+    public readonly boltsInChestsNumber = 3;
     public boltsColorsAmount!: string[];
 
-    public reset(): void
-    {
+    public reset(): void {
         this.boltsColorsAmount = BOLTS_COLORS_AMOUNT.slice();
     }
 }

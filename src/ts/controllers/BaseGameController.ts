@@ -42,6 +42,7 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
         const resetMainGameStep = new ResetMainGameStep(models);
         const resetGameParams: ResetMainGameStepParams = {
             mainGameView: gameUI.mainGroup,
+            userPanel: gameUI.userPanel,
             loadingScreen
         };
         showGameSequence.addConsequents(resetMainGameStep, resetGameParams);

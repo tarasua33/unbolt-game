@@ -37,7 +37,7 @@ export class Game {
 
     private _mainCameraConfig = {
         x: 0,
-        y: 8,
+        y: 9,
         z: 12,
         rotation: - Math.PI / 6,
         mainCameraViewAngle: 75

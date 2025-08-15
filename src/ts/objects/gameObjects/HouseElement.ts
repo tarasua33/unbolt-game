@@ -99,7 +99,7 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
         body.mass = BASE_MASS;
 
         if (this._elementId === ElementIDs.FLOOR_T) {
-            body.velocity.set(4.5, 4.5, 0);
+            body.velocity.set(4.5, 5, 0);
         }
         else {
             const { x, z } = this.position;
