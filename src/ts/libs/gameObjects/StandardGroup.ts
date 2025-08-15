@@ -26,37 +26,22 @@ export class StandardGroup<T extends StandardGroupConfig = StandardGroupConfig> 
     }
 
     public buildObject(): void {
-        this._setBaseConfig();
+        this._setBaseConfig(this);
     }
 
     public reset(): void {
-        this._setBaseConfig();
+        this._setBaseConfig(this);
 
         for (const child of this._gameObjects) {
             child.reset();
         }
     }
 
-    private _setBaseConfig(): void {
-        const config = this._config;
-        const { x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, visible } = config;
-
-        if (typeof x === "number") this.position.x = x;
-        if (typeof y === "number") this.position.y = y;
-        if (typeof z === "number") this.position.z = z;
-
-        this.rotation.set(0, 0, 0);
-        this.quaternion.set(0, 0, 0, 1);
-        if (typeof rotX === "number") this.rotation.x = rotX;
-        if (typeof rotY === "number") this.rotation.y = rotY;
-        if (typeof rotZ === "number") this.rotation.z = rotZ;
-
-        if (typeof scaleX === "number") this.scale.x = scaleX;
-        if (typeof scaleY === "number") this.scale.y = scaleY;
-        if (typeof scaleZ === "number") this.scale.z = scaleZ;
-
-        if (typeof visible === "boolean") this.visible = visible;
+    /* eslint-disable */
+    private _setBaseConfig(ctx: any): void {
+        //pass
     }
+    /* eslint-enable */
 
     public addObject(object: IGameObject): void {
         this._gameObjects.push(object);

@@ -14,6 +14,7 @@ import { MainCamera } from './libs/gameObjects/MainCamera';
 import { LoadingScreen } from './objects/screens/LoadingScreen';
 import { LoadingScreenFactory } from './factories/LoadingScreenFactory';
 import { LoadingScreenController } from './controllers/LoadingScreenController';
+import { injectAll } from './libs/utils/Injections';
 
 interface IDispatchers {
     drag: DragDispatcher;
@@ -61,6 +62,7 @@ export class Game {
      * @param {string} canvasName - ClassName or Id canvas dom
     */
     constructor(canvasName: string) {
+        injectAll();
         const canvas = this._canvas = document.querySelector(canvasName) as HTMLCanvasElement;
         const scene = this._scene = new StandardScene();
 
