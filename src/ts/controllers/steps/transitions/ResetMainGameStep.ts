@@ -12,8 +12,11 @@ export interface ResetMainGameStepParams extends BaseStepParams {
 export class ResetMainGameStep<T extends ResetMainGameStepParams = ResetMainGameStepParams> extends BaseStep<ResetMainGameStepParams> {
     public start({ mainGameView, loadingScreen, userPanel }: T): void {
         loadingScreen.visible = false;
+        
         mainGameView.reset();
         mainGameView.visible = true;
+
+        userPanel.reset();
         userPanel.visible = true;
 
         this._onComplete();

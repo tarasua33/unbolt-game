@@ -5,6 +5,7 @@ import { ElementIDs } from "../models/HouseModel";
 import { IModels } from "../models/Models";
 import { Bolt } from "../objects/gameObjects/Bolt";
 import { LoadingScreen } from "../objects/screens/LoadingScreen";
+import { CollectBoltStep } from "./steps/CollectBoltStep";
 import { HouseElementUnboltedStep } from "./steps/HouseElementUnboltedStep";
 import { IListeningPointedBoltStepParams, ListeningPointedBoltStep } from "./steps/ListeningPointedBoltStep";
 import { ResetMainGameStep, ResetMainGameStepParams } from "./steps/transitions/ResetMainGameStep";
@@ -19,6 +20,7 @@ interface IControllerBaseParams extends IControllerParams {
 
 export class BaseGameController extends Controller<IControllerBaseParams> {
     private _listeningPointedBoltStep: ListeningPointedBoltStep;
+    private _gameUI!: IGameUI
 
     constructor(models: IModels) {
         super(models);
@@ -29,6 +31,7 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
     public start(params: IControllerBaseParams): void {
         const models = this._models;
         const { gameUI, loadingScreen } = this._params = params;
+        this._gameUI = gameUI;
 
         // SHOW GAME
         // Consequents
@@ -80,10 +83,18 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
         super._onComplete();
     }
 
-    private _onUnbolt(bolt: Bolt): void {
-        this._mng.addDynamicStep(new UnboltStep(this._models), {
+    private _onUnbolt(bolt: Bolt, packIndex: number): void {
+        const mng = this._mng;
+
+        mng.addDynamicStep(new UnboltStep(this._models), {
             bolt
         });
+
+        const collectBolt = new CollectBoltStep(this._models);
+        mng.addDynamicStep(collectBolt, {
+            chests: this._gameUI.userPanelChests,
+            idx: packIndex
+        })
     }
 
     private _onUnboltedHouseElement(id: ElementIDs): void {

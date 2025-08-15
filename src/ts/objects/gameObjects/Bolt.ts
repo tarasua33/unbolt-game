@@ -5,12 +5,14 @@ import { StandardMesh, StandardMeshConfig } from "../../libs/gameObjects/Standar
 import { Signal } from "../../libs/utils/Signal";
 import gsap from "gsap";
 import { Back } from "gsap";
+import { COLORS } from "../../models/BoltsModel";
 
 export interface BoltConfig extends StandardGroupConfig {
     bodyConfig: StandardMeshConfig;
     headConfig: StandardMeshConfig;
     boltedElementId: ElementIDs;
     preventerElementId: ElementIDs | undefined;
+    color: COLORS;
 }
 
 
@@ -21,6 +23,7 @@ export class Bolt extends StandardGroup<BoltConfig> {
     private _boltedElementId!: ElementIDs;
     private _preventerElementId!: ElementIDs | undefined;
 
+    private _color!: COLORS;
     private _bolted = true;
     private _animationGroup!: StandardGroup;
 
@@ -40,11 +43,16 @@ export class Bolt extends StandardGroup<BoltConfig> {
         return this._bolted;
     }
 
+    public get color(): COLORS {
+        return this._color;
+    }
+
     public buildObject(): void {
         super.buildObject();
 
-        const { boltedElementId, preventerElementId, bodyConfig, headConfig } = this._config;
+        const { color, boltedElementId, preventerElementId, bodyConfig, headConfig } = this._config;
 
+        this._color = color;
         this._boltedElementId = boltedElementId;
         this._preventerElementId = preventerElementId;
 
@@ -59,21 +67,6 @@ export class Bolt extends StandardGroup<BoltConfig> {
         head.buildObject();
         head.raycasterSignal.add(this._onPointed, this);
         animationGroup.addObject(head);
-
-        // DEV
-        // if (gui) {
-        //     const delta = 0.005
-        //     const folder = gui.addFolder(boltedElementId);
-        //     folder.add(this.position, "x").min(-5).max(5).step(delta).name("Position x");
-        //     folder.add(this.position, "y").min(-5).max(5).step(delta).name("Position y");
-        //     folder.add(this.position, "z").min(-5).max(5).step(delta).name("Position z");
-        //     folder.add(this.rotation, "x").min(-5).max(5).step(delta).name("Rotation x");
-        //     folder.add(this.rotation, "y").min(-5).max(5).step(delta).name("Rotation y");
-        //     folder.add(this.rotation, "z").min(-5).max(5).step(delta).name("Rotation z");
-        //     folder.add(this.scale, "x").min(-5).max(5).step(delta).name("Scale x");
-        //     folder.add(this.scale, "y").min(-5).max(5).step(delta).name("Scale y");
-        //     folder.add(this.scale, "z").min(-5).max(5).step(delta).name("Scale z");
-        // }
     }
 
     public _onPointed(): void {

@@ -96,7 +96,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
             }),
         ];
 
-        const bodyMaterialsMap = new Map([
+        const bodyMaterialsMap = new Map<COLORS, MeshPhongMaterial>([
             [COLORS.green, greenBodyMaterial],
             [COLORS.red, redBodyMaterial],
             [COLORS.blue, blueBodyMaterial],
@@ -403,6 +403,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
             const color = boltColorsAmount.splice(colorIndex, 1)[0]!;
 
             configs.push({
+                color: color,
                 boltedElementId: pos.boltedElementId,
                 x: pos.x,
                 y: pos.y,

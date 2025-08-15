@@ -16,24 +16,30 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
         const { parent } = params;
         const boltModel = this._models.boltsModel;
 
-        const circleMaterials = []
+        const circleMaterials: MeshBasicMaterial[][] = []
         const chestsNumber = boltModel.chestsNumber;
+        const boltsInChestsNumber = boltModel.boltsInChestsNumber;
         const size = 16;
         for (let i = 0; i < chestsNumber; i++) {
-            circleMaterials.push(
-                new MeshBasicMaterial({
-                    map: new CanvasTexture(
-                        createCircleGraphic(
-                            size,
-                            { x: size / 2, y: size / 2 },
-                            size / 2,
-                            0,
-                            Math.PI * 2,
-                            "white",
-                            false)),
-                    transparent: true
-                })
-            )
+            circleMaterials.push([]);
+            for (let j = 0; j < boltsInChestsNumber; j++) {
+
+                circleMaterials[i]!.push(
+                    new MeshBasicMaterial({
+                        map: new CanvasTexture(
+                            createCircleGraphic(
+                                size,
+                                { x: size / 2, y: size / 2 },
+                                size / 2,
+                                0,
+                                Math.PI * 2,
+                                "white",
+                                false)),
+                        transparent: true,
+                        opacity: 0.25
+                    })
+                )
+            }
         }
 
         const userPanelChestConfigs: UserPanelChestConfig[] = [];
@@ -41,6 +47,7 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
         for (let i = 0; i < chestsNumber; i++) {
             userPanelChestConfigs.push(
                 {
+                    chestIdx: i,
                     scaleX: 0.35,
                     scaleY: 0.35,
                     scaleZ: 0.35,
@@ -56,13 +63,15 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                     circleConfig: {
                         z: 0.01,
                         geometry: new PlaneGeometry(0.15, 0.15),
-                        material: circleMaterials[i]!,
+                        material: circleMaterials[0]![0]!
                     },
                     circlesPositions: [
                         { x: -0.23, y: -0.11 },
                         { x: 0, y: -0.11 },
                         { x: 0.23, y: -0.11 }
-                    ]
+                    ],
+                    circlesOpacity: 0.25,
+                    circleMaterials
                 }
             )
         }

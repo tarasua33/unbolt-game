@@ -1,5 +1,6 @@
 import { BaseStep, BaseStepParams } from "../../libs/controllers/BaseStep";
 import { Signal } from "../../libs/utils/Signal";
+import { COLORS } from "../../models/BoltsModel";
 import { Bolt } from "../../objects/gameObjects/Bolt";
 
 export interface IListeningPointedBoltStepParams extends BaseStepParams {
@@ -24,14 +25,18 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
     private _onBoltPointed(bolt: Bolt): void {
         if (bolt.bolted) {
             console.log("POINTED");
-            const preventerElementId = bolt.preventerElementId;
 
+            const targetPackIndex = this._getTargetChestIndex(bolt.color);
+            const isTargetColor = targetPackIndex !== -1;
+            const preventerElementId = bolt.preventerElementId;
             const houseModel = this._models.houseModel;
 
-            if (!preventerElementId || !houseModel.boltedElements.has(preventerElementId)) {
+            if (isTargetColor &&
+                (!preventerElementId || !houseModel.boltedElements.has(preventerElementId))
+            ) {
 
                 this._boltsNum--;
-                this.unboltSignal.dispatch(bolt);
+                this.unboltSignal.dispatch(bolt, targetPackIndex);
 
                 const config = houseModel.taskMap.get(bolt.boltedElementId);
                 config!.boltsNum--;
@@ -45,6 +50,22 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
                 this._onComplete();
             }
         }
+    }
+
+    private _getTargetChestIndex(color: COLORS): number {
+        const targetBoltsPacks = this._models.boltsModel.targetBoltsPacks;
+
+        let idx = -1
+        for (let i = 0; i < targetBoltsPacks.length; i++) {
+            const pack = targetBoltsPacks[i]!;
+            if (pack.type === color && pack.count > 0) {
+                idx = i;
+
+                break;
+            }
+        }
+
+        return idx;
     }
 
     private _removeBoltsListeners(): void {
