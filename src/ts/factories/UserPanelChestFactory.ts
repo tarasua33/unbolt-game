@@ -1,9 +1,9 @@
 import { CanvasTexture, MeshBasicMaterial, PlaneGeometry } from "three";
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
 import { StandardGroup } from "../libs/gameObjects/StandardGroup";
-// import { StandardMesh, StandardMeshConfig } from "../libs/gameObjects/StandardMesh";
 import { UserPanelChest, UserPanelChestConfig } from "../objects/userPanel/UserPanelChest";
 import { createCircleGraphic } from "../libs/utils/GameHelpers";
+import { IAnimationConfig } from "../libs/gameObjects/KeyFrameStandardMesh";
 
 interface IParamsConfig {
     parent: StandardGroup;
@@ -63,7 +63,47 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                     circleConfig: {
                         z: 0.01,
                         geometry: new PlaneGeometry(0.15, 0.15),
-                        material: circleMaterials[0]![0]!
+                        material: circleMaterials[0]![0]!,
+                        animations: new Map<string, IAnimationConfig>([
+                            [
+                                "collect", [
+                                    {
+                                        propertyKey: ".material.opacity",
+                                        steps: [
+                                            {
+                                                duration: 0,
+                                                valuesProperty: 0.25
+                                            },
+                                            {
+                                                duration: 0.25,
+                                                valuesProperty: 0.5
+                                            },
+                                            {
+                                                duration: 0.5,
+                                                valuesProperty: 1
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        propertyKey: ".scale",
+                                        steps: [
+                                            {
+                                                duration: 0,
+                                                valuesProperty: [1, 1, 1]
+                                            },
+                                            {
+                                                duration: 0.25,
+                                                valuesProperty: [1.5, 1.5, 1.5]
+                                            },
+                                            {
+                                                duration: 0.5,
+                                                valuesProperty: [1, 1, 1]
+                                            }
+                                        ]
+                                    },
+                                ]
+                            ]
+                        ])
                     },
                     circlesPositions: [
                         { x: -0.23, y: -0.11 },

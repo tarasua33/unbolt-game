@@ -6,7 +6,7 @@ export function injector(cls: new (...args: any[]) => any, fnc: Function): void 
 }
 
 
-/* eslint-disable */
+// /* eslint-disable */
 function _setBaseConfig(ctx: any): void {
     const config = ctx._config;
     const { x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, visible } = config;
@@ -27,7 +27,7 @@ function _setBaseConfig(ctx: any): void {
 
     if (typeof visible === "boolean") ctx.visible = visible;
 }
-/* eslint-enable */
+// /* eslint-enable */
 
 export function injectAll(): any {
     injector(StandardGroup, _setBaseConfig);

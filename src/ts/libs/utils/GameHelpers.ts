@@ -20,3 +20,5 @@ export function createCircleGraphic(size: number, center: IPoint, radius: number
 
     return canvas
 }
+
+// function createAnimations(): 
