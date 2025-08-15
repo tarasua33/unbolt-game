@@ -24,8 +24,7 @@ export class AssetsLoader {
         },
         textures: {}
     }
-
-    private _loadCounter = 0;
+    
     private _gltfLoader: GLTFLoader;
     private _textureLoader: TextureLoader;
     private _manager!: LoadingManager;
@@ -38,12 +37,10 @@ export class AssetsLoader {
 
     public loadAssets(): void {
         this._manager.onProgress = this._onProgressLoad.bind(this);
-
-        this._loadCounter = 5;
+        this._manager.onLoad = this._onLoadAsset.bind(this);
 
         const gltfLoader = this._gltfLoader;
         const textureLoader = this._textureLoader;
-        // gltfLoader.load("/simple_house/scene.gltf",
 
         gltfLoader.load("/walls_window_door/scene.gltf",
             this._onHouseElementsLoaded.bind(this)
@@ -51,34 +48,18 @@ export class AssetsLoader {
 
         textureLoader.load("/tile.jpg", (data: Texture) => {
             this.assets.textures["tile"] = data;
-
-            if (data) {
-                this._onLoadAsset();
-            }
         })
 
         textureLoader.load("/bolt_body.jpg", (data: Texture) => {
             this.assets.textures["boltBody"] = data;
-
-            if (data) {
-                this._onLoadAsset();
-            }
         });
 
         textureLoader.load("/bolt_head.jpg", (data: Texture) => {
             this.assets.textures["boltHead"] = data;
-
-            if (data) {
-                this._onLoadAsset();
-            }
         })
 
         textureLoader.load("/chest.png", (data: Texture) => {
             this.assets.textures["chest"] = data;
-
-            if (data) {
-                this._onLoadAsset();
-            }
         })
     }
 
@@ -93,7 +74,6 @@ export class AssetsLoader {
             { type: ElementTypes.FL_B, idx: 10 },
         ]
 
-        let counter = 0;
         for (const el of elements) {
             const model = gltf.scene.children[0]!.children[0]!.children[0]!.children[el.idx]!;
             this.assets.gltf![el.type] = model;
@@ -102,24 +82,12 @@ export class AssetsLoader {
             const center = new Vector3();
             box.getCenter(center);
             model.position.sub(center);
-
-            counter++
         }
-
-        this._onLoadAsset(elements.length === counter)
     }
 
-    private _onLoadAsset(success = true): void {
-        if (success) {
-            this._loadCounter--;
-
-            if (this._loadCounter === 0) {
-                this.assetsLoadComplete.dispatch();
-            }
-        }
-        else {
-            console.error("Assets not loaded")
-        }
+    private _onLoadAsset(): void
+    {
+        this.assetsLoadComplete.dispatch();
     }
 
     private _onProgressLoad(url: string, itemsLoaded: number, itemsTotal: number): void {
