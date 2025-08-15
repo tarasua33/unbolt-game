@@ -19,6 +19,7 @@ export abstract class BaseStep<T extends BaseStepParams = BaseStepParams> {
 
     protected _onComplete(): void {
         this.completeStepSignal.dispatch(this);
+        console.log(this)
     }
 
     public forceComplete(): void {

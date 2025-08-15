@@ -18,7 +18,8 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
         const bodyGeometry = new CylinderGeometry(0.2, 0.1, 0.4, 16);
         const greenBodyMaterial = new MeshPhongMaterial({
             color: COLORS.green,
-            map: assetsLoader.assets.textures.boltBody!
+            map: assetsLoader.assets.textures.boltBody!,
+            transparent: true
         })
 
         const boltHead = assetsLoader.assets.textures.boltHead!
@@ -26,13 +27,16 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
         const greenHeadMaterials = [
             new MeshPhongMaterial({
                 color: COLORS.green,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.green,
                 map: boltHead,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.green,
+                transparent: true
             }),
         ];
 
@@ -41,13 +45,16 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
         const redHeadMaterials = [
             new MeshPhongMaterial({
                 color: COLORS.red,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.red,
                 map: boltHead,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.red,
+                transparent: true
             }),
         ];
 
@@ -56,13 +63,16 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
         const yellowHeadMaterials = [
             new MeshPhongMaterial({
                 color: COLORS.yellow,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.yellow,
+                transparent: true,
                 map: boltHead,
             }),
             new MeshPhongMaterial({
                 color: COLORS.yellow,
+                transparent: true
             }),
         ];
 
@@ -71,13 +81,16 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
         const blueHeadMaterials = [
             new MeshPhongMaterial({
                 color: COLORS.blue,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.blue,
                 map: boltHead,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.blue,
+                transparent: true
             }),
         ];
 
@@ -86,13 +99,16 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
         const greyHeadMaterials = [
             new MeshPhongMaterial({
                 color: COLORS.grey,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.grey,
                 map: boltHead,
+                transparent: true
             }),
             new MeshPhongMaterial({
                 color: COLORS.grey,
+                transparent: true
             }),
         ];
 
@@ -418,7 +434,7 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
                 bodyConfig: {
                     y: -0.2,
                     geometry: bodyGeometry,
-                    material: bodyMaterialsMap.get(color)!
+                    material: bodyMaterialsMap.get(color)!,
                 },
                 headConfig: {
                     y: 0.1,

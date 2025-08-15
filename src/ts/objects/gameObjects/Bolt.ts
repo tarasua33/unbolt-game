@@ -4,8 +4,9 @@ import { ElementIDs } from "../../models/HouseModel";
 import { StandardMesh, StandardMeshConfig } from "../../libs/gameObjects/StandardMesh";
 import { Signal } from "../../libs/utils/Signal";
 import gsap from "gsap";
-import { Back } from "gsap";
+import { Back, Expo } from "gsap";
 import { COLORS } from "../../models/BoltsModel";
+import { Material } from "three";
 
 export interface BoltConfig extends StandardGroupConfig {
     bodyConfig: StandardMeshConfig;
@@ -19,6 +20,9 @@ export interface BoltConfig extends StandardGroupConfig {
 export class Bolt extends StandardGroup<BoltConfig> {
     public raycasterSignal = new Signal();
     public completeUnboltedSignal = new Signal();
+
+    private _body!: StandardMesh;
+    private _head!: StandardMesh
 
     private _boltedElementId!: ElementIDs;
     private _preventerElementId!: ElementIDs | undefined;
@@ -59,14 +63,22 @@ export class Bolt extends StandardGroup<BoltConfig> {
         const animationGroup = this._animationGroup = new StandardGroup({});
         this.addObject(animationGroup);
 
-        const body = new StandardMesh(bodyConfig);
+        const bodyMaterial = (bodyConfig.material as Material);
+        bodyConfig.material = bodyMaterial.clone();
+        const body = this._body = new StandardMesh(bodyConfig);
         body.buildObject();
         animationGroup.addObject(body);
 
-        const head = new StandardMesh(headConfig);
+        const headMaterial = (headConfig.material as Material[]);
+        headConfig.material = headMaterial.map(this._cloneMaterial);
+        const head = this._head = new StandardMesh(headConfig);
         head.buildObject();
         head.raycasterSignal.add(this._onPointed, this);
         animationGroup.addObject(head);
+    }
+
+    private _cloneMaterial(material: Material): Material {
+        return material.clone()
     }
 
     public _onPointed(): void {
@@ -88,7 +100,7 @@ export class Bolt extends StandardGroup<BoltConfig> {
             {
                 ["progress"]: 1,
                 duration: 1.5,
-                ease: "expo.out",
+                ease: "none",
                 overwrite: true,
                 onComplete: this._onCompleteUnboltedAnimation.bind(this)
             });
@@ -97,21 +109,35 @@ export class Bolt extends StandardGroup<BoltConfig> {
     private _onCompleteUnboltedAnimation(): void {
         this.visible = false;
 
+        (this._body.material as Material).opacity = 1;
+        const materials = this._head.material as Material[];
+        for (const material of materials) {
+            material.opacity = 1;
+        }
+
         this.completeUnboltedSignal.dispatch();
     }
 
     private set progress(value: number) {
         this._progress = value;
 
+        const moveValue = Expo.easeOut(value);
         const animationGroup = this._animationGroup;
-        animationGroup.position.y = this._progress * this._animYOffset;
-        animationGroup.rotation.y = this._progress * this._animYRotation;
+        animationGroup.position.y = moveValue * this._animYOffset;
+        animationGroup.rotation.y = moveValue * this._animYRotation;
 
-        const helpValue = Back.easeIn(value);
+        const opacityValue = Expo.easeInOut(value);
+        (this._body.material as Material).opacity = 1 - opacityValue;
+        const materials = this._head.material as Material[];
+        for (const material of materials) {
+            material.opacity = 1 - opacityValue;
+        }
 
-        animationGroup.scale.x = 1 - Math.sin(helpValue);
-        animationGroup.scale.y = 1 - Math.sin(helpValue);
-        animationGroup.scale.z = 1 - Math.sin(helpValue);
+        const scaleValue = Back.easeOut(value);
+
+        animationGroup.scale.x = 1 + 1 * scaleValue;
+        animationGroup.scale.y = 1 + 1 * scaleValue;
+        animationGroup.scale.z = 1 + 1 * scaleValue;
     }
 
     private get progress(): number {
@@ -122,6 +148,12 @@ export class Bolt extends StandardGroup<BoltConfig> {
         super.reset();
 
         gsap.killTweensOf(this);
+
+        (this._body.material as Material).opacity = 1;
+        const materials = this._head.material as Material[];
+        for (const material of materials) {
+            material.opacity = 1;
+        }
 
         this._bolted = true;
         const animationGroup = this._animationGroup;
