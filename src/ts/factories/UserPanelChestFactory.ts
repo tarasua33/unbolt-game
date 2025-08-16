@@ -52,15 +52,15 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                 steps: [
                     {
                         duration: 0,
-                        valuesProperty: [chestScale, chestScale, chestScale]
+                        values: [chestScale, chestScale, chestScale]
                     },
                     {
                         duration: 0.15,
-                        valuesProperty: [chestScale + 0.02, chestScale + 0.02, chestScale + 0.02]
+                        values: [chestScale + 0.02, chestScale + 0.02, chestScale + 0.02]
                     },
                     {
                         duration: 0.15,
-                        valuesProperty: [0, 0, 0]
+                        values: [0, 0, 0]
                     }
                 ]
             }
@@ -71,15 +71,15 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                 steps: [
                     {
                         duration: 0,
-                        valuesProperty: [0, 0, 0]
+                        values: [0, 0, 0]
                     },
                     {
                         duration: 0.15,
-                        valuesProperty: [chestScale + 0.02, chestScale + 0.02, chestScale + 0.02]
+                        values: [chestScale + 0.02, chestScale + 0.02, chestScale + 0.02]
                     },
                     {
                         duration: 0.15,
-                        valuesProperty: [chestScale, chestScale, chestScale]
+                        values: [chestScale, chestScale, chestScale]
                     }
                 ]
             }
@@ -115,15 +115,15 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                                         steps: [
                                             {
                                                 duration: 0,
-                                                valuesProperty: circlesOpacity
+                                                values: circlesOpacity
                                             },
                                             {
                                                 duration: 0.25,
-                                                valuesProperty: 0.85
+                                                values: 0.85
                                             },
                                             {
                                                 duration: 0.5,
-                                                valuesProperty: 1
+                                                values: 1
                                             }
                                         ]
                                     },
@@ -132,15 +132,15 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                                         steps: [
                                             {
                                                 duration: 0,
-                                                valuesProperty: [1, 1, 1]
+                                                values: [1, 1, 1]
                                             },
                                             {
                                                 duration: 0.25,
-                                                valuesProperty: [1.5, 1.5, 1.5]
+                                                values: [1.5, 1.5, 1.5]
                                             },
                                             {
                                                 duration: 0.5,
-                                                valuesProperty: [1, 1, 1]
+                                                values: [1, 1, 1]
                                             }
                                         ]
                                     },

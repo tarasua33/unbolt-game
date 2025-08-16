@@ -14,6 +14,7 @@ import { UserPanelFactory } from "./UserPanelFactory";
 import { StandardGroup } from "../libs/gameObjects/StandardGroup";
 import { UserPanelChestFactory } from "./UserPanelChestFactory";
 import { UserPanelChest } from "../objects/userPanel/UserPanelChest";
+import { ReplayButtonFactory } from "./ReplayButtonFactory";
 
 interface IGameFactoryConfig {
     scene: IGameGroup;
@@ -42,7 +43,8 @@ export class GameUiObjectsFactory extends AbstractBaseFactory {
         const boltsFactory = new BoltsFactory(assetsLoader, models);
         const transitionScreenFactory = new TransitionScreenFactory(assetsLoader, models);
         const userPanelFactory = new UserPanelFactory(assetsLoader, models);
-        const userPanelChestFactory = new UserPanelChestFactory(assetsLoader, models)
+        const userPanelChestFactory = new UserPanelChestFactory(assetsLoader, models);
+                const replayButtonFactory = new ReplayButtonFactory(assetsLoader, models);
 
         const mainGroup = mainFactory.buildUi({ parent: scene, drag });
         const userPanel = userPanelFactory.buildUi({parent: camera})
@@ -53,7 +55,8 @@ export class GameUiObjectsFactory extends AbstractBaseFactory {
             bolts: boltsFactory.buildUi({ parent: mainGroup }),
             transitionScreen: transitionScreenFactory.buildUi({parent: camera}),
             userPanel,
-            userPanelChests: userPanelChestFactory.buildUi({parent: userPanel})
+            userPanelChests: userPanelChestFactory.buildUi({parent: userPanel}),
+            replayButton: replayButtonFactory.buildUi({parent: userPanel})
         }
 
         return ui;

@@ -3,7 +3,7 @@ import { Signal } from '../utils/Signal';
 
 export interface IAnimationStep {
     duration: number,
-    valuesProperty: number[] | number;
+    values: number[] | number;
 }
 
 export interface ITrackConfig {
@@ -67,26 +67,26 @@ export class KeyFrameAnimation
         const { propertyKey, steps } = config;
 
         const times: number[] = [];
-        let values: number[] = []
+        let valuesCombined: number[] = []
 
         let totalDuration = 0;
 
-        for (const { duration, valuesProperty } of steps) {
+        for (const { duration, values } of steps) {
             totalDuration += duration;
 
             times.push(totalDuration);
 
-            if (typeof valuesProperty === "number") {
-                values.push(valuesProperty);
+            if (typeof values === "number") {
+                valuesCombined.push(values);
             }
             else {
-                values = values.concat(valuesProperty as Array<number>)
+                valuesCombined = values.concat(values as Array<number>)
             }
         }
 
         const Track = MAP_PROPERTIES.get(propertyKey)!;
 
-        const track = new Track(propertyKey, times, values);
+        const track = new Track(propertyKey, times, valuesCombined);
 
         return track
     }

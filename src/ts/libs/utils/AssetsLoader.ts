@@ -24,7 +24,7 @@ export class AssetsLoader {
         },
         textures: {}
     }
-    
+
     private _gltfLoader: GLTFLoader;
     private _textureLoader: TextureLoader;
     private _manager!: LoadingManager;
@@ -44,11 +44,11 @@ export class AssetsLoader {
 
         gltfLoader.load("/walls_window_door/scene.gltf",
             this._onHouseElementsLoaded.bind(this)
-        )
+        );
 
         textureLoader.load("/tile.jpg", (data: Texture) => {
             this.assets.textures["tile"] = data;
-        })
+        });
 
         textureLoader.load("/bolt_body.jpg", (data: Texture) => {
             this.assets.textures["boltBody"] = data;
@@ -56,11 +56,15 @@ export class AssetsLoader {
 
         textureLoader.load("/bolt_head.jpg", (data: Texture) => {
             this.assets.textures["boltHead"] = data;
-        })
+        });
 
         textureLoader.load("/chest.png", (data: Texture) => {
             this.assets.textures["chest"] = data;
-        })
+        });
+
+        textureLoader.load("/replay.png", (data: Texture) => {
+            this.assets.textures["replay"] = data;
+        });
     }
 
     private _onHouseElementsLoaded(gltf: any): void {
@@ -85,8 +89,7 @@ export class AssetsLoader {
         }
     }
 
-    private _onLoadAsset(): void
-    {
+    private _onLoadAsset(): void {
         this.assetsLoadComplete.dispatch();
     }
 
