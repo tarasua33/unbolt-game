@@ -1,33 +1,28 @@
 import { StandardScene } from './libs/gameObjects/StandardScene';
-import { GameUiObjectsFactory, IGameUI } from './factories/GameUiObjectsFactory';
 import { DragDispatcher } from './libs/utils/DragDispatcher';
 import { AssetsLoader } from './libs/utils/AssetsLoader';
 import { AmbientLight, Clock, DirectionalLight, WebGLRenderer } from "three";
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { World } from 'cannon-es';
 import { RaycasterDispatcher } from './libs/utils/RaycasterDispatcher';
-import { BaseGameController } from './controllers/BaseGameController';
 import { HouseModel } from './models/HouseModel';
 import { BoltsModel } from './models/BoltsModel';
-import { IModels } from './models/Models';
 import { MainCamera } from './libs/gameObjects/MainCamera';
-import { LoadingScreen } from './objects/screens/LoadingScreen';
-import { LoadingScreenFactory } from './factories/LoadingScreenFactory';
-import { LoadingScreenController } from './controllers/LoadingScreenController';
 import { injectAll } from './libs/utils/Injections';
+import { LoadingState } from './controllers/LoadingState';
+import { BaseGameState } from './controllers/BaseGameState';
 
-interface IDispatchers {
+export interface IDispatchers {
     drag: DragDispatcher;
     raycaster: RaycasterDispatcher;
 }
 
 export class Game {
     private _mainCamera: MainCamera;
-    private _canvas: HTMLCanvasElement;
+    // private _canvas: HTMLCanvasElement;
     private _clock = new Clock;
     private _scene: StandardScene;
     private _renderer: WebGLRenderer;
-    private _assetsLoader!: AssetsLoader;
     private _physicWorld!: World;
     private _gravityY = -9.8;
 
@@ -52,18 +47,12 @@ export class Game {
     }
     private _bgColor = "#AFEEEE";
 
-    private _gameUI!: IGameUI;
-    private _loadingScreen!: LoadingScreen;
-    private _dispatchers!: IDispatchers;
-    private _baseGameController!: BaseGameController;
-    private _models!: IModels;
-
     /**
      * @param {string} canvasName - ClassName or Id canvas dom
     */
     constructor(canvasName: string) {
         injectAll();
-        const canvas = this._canvas = document.querySelector(canvasName) as HTMLCanvasElement;
+        const canvas = document.querySelector(canvasName) as HTMLCanvasElement;
         const scene = this._scene = new StandardScene();
 
         const sizes = this._sizes;
@@ -101,7 +90,7 @@ export class Game {
         houseModel.reset();
         const boltsModel = new BoltsModel();
         boltsModel.reset();
-        const models = this._models = {
+        const models = {
             houseModel: houseModel,
             boltsModel: boltsModel
         }
@@ -111,49 +100,18 @@ export class Game {
         world.gravity.set(0, this._gravityY, 0);
 
         // CREATE DISPATCHERS
-        this._dispatchers = this._createDispatchers(renderer);
-
-        // CREATE CONTROLLERS
-        this._baseGameController = new BaseGameController(this._models);
-        const loadingScreenController = new LoadingScreenController(models);
-
-        // LOADING SCREEN
-        const loadingScreen = this._loadingScreen = new LoadingScreenFactory().buildUi({ parent: this._mainCamera });
+        const dispatchers = this._createDispatchers(renderer);
 
         // LOAD ASSETS
-        const assetsLoader = this._assetsLoader = new AssetsLoader();
+        const assetsLoader = new AssetsLoader();
 
-        loadingScreenController.completeStepSignal.addOnce(this._onAssetsLoaded, this)
-        loadingScreenController.start({ view: loadingScreen, assetsLoader });
+        // BASE GAME STATE
+        const baseGameState = new BaseGameState(this._scene, this._mainCamera, models, assetsLoader, dispatchers, world);
 
-        // assetsLoader.assetsLoadComplete.add(this._onAssetsLoaded, this);
-        assetsLoader.loadAssets();
-    }
-
-    private _onAssetsLoaded(): void {
-        const dispatchers = this._dispatchers;
-
-        // CREATE UI ELEMENTS
-        const gameUI = this._buildGameObjects(this._scene, dispatchers);
-
-        // START DISPATCH EVENTS
-        dispatchers.drag.startDispatch();
-        dispatchers.raycaster.startDispatch((gameUI.bolts.slice() as any).concat(Array.from(gameUI.houseElements.values()).slice()));
-
-        const baseGameController = this._baseGameController;
-        baseGameController.start({ gameUI, loadingScreen: this._loadingScreen });
-    }
-
-    private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): IGameUI {
-        const uiFactory = new GameUiObjectsFactory(this._assetsLoader, this._models);
-        const gameUI = this._gameUI = uiFactory.buildGameUIObjects({
-            scene,
-            camera: this._mainCamera,
-            drag: dispatchers.drag,
-            physicWorld: this._physicWorld
-        });
-
-        return gameUI
+        // LOADING STATE
+        const loadingState = new LoadingState(this._scene, this._mainCamera, models, assetsLoader, dispatchers, world);
+        loadingState.addState("baseGameState", baseGameState);
+        loadingState.start();
     }
 
     private _createDispatchers(renderer: WebGLRenderer): IDispatchers {
