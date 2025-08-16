@@ -44,8 +44,8 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
         }
 
         const userPanelChestConfigs: UserPanelChestConfig[] = [];
-        const deltaX = 0.4;
-        const chestScale = 0.35;
+        const deltaX = 1.1;
+        const chestScale = 1;
         const chestAnimations = new Map<string, IAnimationConfig>()
         chestAnimations.set("close", [
             {
@@ -94,8 +94,8 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                     scaleX: chestScale,
                     scaleY: chestScale,
                     scaleZ: chestScale,
-                    x: -0.4 + deltaX * i,
-                    y: 1.05,
+                    x: -deltaX + deltaX * i,
+                    y: 9.9,
                     chestConfig: {
                         geometry: new PlaneGeometry(1, 1),
                         material: new MeshBasicMaterial({

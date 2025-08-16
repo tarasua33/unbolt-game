@@ -13,7 +13,7 @@ export class ReplayButtonFactory extends AbstractStandardFactory<KeyFrameStandar
     public buildUi(params: IParamsConfig): KeyFrameStandardMesh {
         const { parent } = params;
 
-        const buttonScale = 1.2;
+        const buttonScale = 3;
 
         const buttonAnimations: KeyFrameAnimationConfig = new Map<string, IAnimationConfig>();
         buttonAnimations.set("tap", [
@@ -42,7 +42,7 @@ export class ReplayButtonFactory extends AbstractStandardFactory<KeyFrameStandar
                 map: this._assetsLoader.assets.textures["replay"]!,
                 transparent: true
             }),
-            y: 1.35,
+            y: 5.65,
             // x: 0.4,
             scaleX: buttonScale,
             scaleY: buttonScale,

@@ -121,7 +121,7 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
     }
 
     public forceComplete(): void {
-        this._onComplete();
+        // this._onComplete();
 
         this._mng.forceComplete();
     }

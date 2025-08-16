@@ -49,9 +49,9 @@ export class GameUiObjectsFactory extends AbstractBaseFactory {
         const replayButtonFactory = new ReplayButtonFactory(assetsLoader, models);
 
         const mainGroup = mainFactory.buildUi({ parent: scene, drag });
-        const userPanel = userPanelFactory.buildUi({ parent: camera })
+        const userPanel = userPanelFactory.buildUi({ parent: scene })
 
-        const ui = {
+        const ui: IGameUI = {
             mainGroup: mainGroup,
             houseElements: houseElementsFactory.buildUi({ parent: mainGroup, physicWorld }),
             bolts: boltsFactory.buildUi({ parent: mainGroup }),

@@ -23,11 +23,13 @@ export class BaseGameState extends BaseState {
         const gameUI = this._gameUI = this._buildGameObjects(this._mainScene, dispatchers);
 
         // START DISPATCH EVENTS
+        const tapElements = ((gameUI.bolts.slice() as any).concat(Array.from(gameUI.houseElements.values()).slice()))
+        tapElements.push(gameUI.replayButton);
         dispatchers.drag.startDispatch();
-        dispatchers.raycaster.startDispatch((gameUI.bolts.slice() as any).concat(Array.from(gameUI.houseElements.values()).slice()));
+        dispatchers.raycaster.startDispatch(tapElements);
 
         baseGameController.completeStepSignal.add(this._onGameSuccess, this);
-        userInterfaceController.stopGameSignal.addOnce(this._onStopGame, this);
+        userInterfaceController.stopGameSignal.add(this._onStopGame, this);
 
         baseGameController.start({ gameUI, loadingScreen });
         userInterfaceController.start({ gameUI, loadingScreen, button: gameUI.replayButton });
@@ -51,20 +53,26 @@ export class BaseGameState extends BaseState {
     }
 
     private _onStopGame(): void {
-        this._baseGameController.forceComplete();
-        this._userInterfaceController.completeStepSignal.addOnce(this._restartGame, this)
+        const baseGameController = this._baseGameController;
+        const userInterfaceController = this._userInterfaceController;
+
+        userInterfaceController.stopGameSignal.removeAll();
+        baseGameController.completeStepSignal.removeAll();
+
+        baseGameController.forceComplete();
+        userInterfaceController.completeStepSignal.addOnce(this._restartGame, this)
     }
 
     private _restartGame(): void {
         const baseGameController = this._baseGameController;
         const userInterfaceController = this._userInterfaceController;
 
-        baseGameController.completeStepSignal.remove(this._onGameSuccess);
-        userInterfaceController.stopGameSignal.remove(this._onStopGame);
-        userInterfaceController.completeStepSignal.remove(this._restartGame);
+        baseGameController.completeStepSignal.removeAll();
+        userInterfaceController.stopGameSignal.removeAll();
+        userInterfaceController.completeStepSignal.removeAll();
 
         // userInterfaceController.forceComplete();
-        baseGameController.forceComplete();
+        // baseGameController.forceComplete();
 
         this._models.houseModel.reset();
         this._models.boltsModel.reset();
@@ -72,8 +80,8 @@ export class BaseGameState extends BaseState {
         const gameUI = this._gameUI;
         const loadingScreen = this._loadingScreen;
 
-        baseGameController.completeStepSignal.add(this._onGameSuccess);
-        userInterfaceController.stopGameSignal.addOnce(this._onStopGame);
+        baseGameController.completeStepSignal.add(this._onGameSuccess, this);
+        userInterfaceController.stopGameSignal.add(this._onStopGame, this);
         baseGameController.start({ gameUI, loadingScreen, isReplay: true });
         userInterfaceController.start({ gameUI, loadingScreen, button: gameUI.replayButton });
     }
@@ -82,9 +90,9 @@ export class BaseGameState extends BaseState {
         const baseGameController = this._baseGameController;
         const userInterfaceController = this._userInterfaceController;
 
-        baseGameController.completeStepSignal.remove(this._onGameSuccess);
-        userInterfaceController.stopGameSignal.remove(this._onStopGame);
-        userInterfaceController.completeStepSignal.remove(this._restartGame);
+        baseGameController.completeStepSignal.removeAll();
+        userInterfaceController.stopGameSignal.removeAll();
+        userInterfaceController.completeStepSignal.removeAll();
 
         userInterfaceController.forceComplete();
         // baseGameController.forceComplete();
@@ -96,7 +104,7 @@ export class BaseGameState extends BaseState {
         const loadingScreen = this._loadingScreen;
 
         baseGameController.completeStepSignal.add(this._onGameSuccess, this);
-        userInterfaceController.stopGameSignal.addOnce(this._onStopGame, this);
+        userInterfaceController.stopGameSignal.add(this._onStopGame, this);
         baseGameController.start({ gameUI, loadingScreen });
         userInterfaceController.start({ gameUI, loadingScreen, button: gameUI.replayButton });
     }

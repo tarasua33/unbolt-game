@@ -19,7 +19,9 @@ export class ScreenFadeInStep<T extends ScreenFadeInStepParams = ScreenFadeInSte
     }
 
     public _onComplete(): void {
-        this._params.screen.completeAnimationSignal.remove(this._onComplete);
+        if (this._params) {
+            this._params.screen.completeAnimationSignal.remove(this._onComplete);
+        }
         super._onComplete();
     }
 
