@@ -1,6 +1,5 @@
 import { StandardGroup, StandardGroupConfig } from "../../libs/gameObjects/StandardGroup";
 import { ElementIDs } from "../../models/HouseModel";
-// import * as dat from "lil-gui";
 import { StandardMesh, StandardMeshConfig } from "../../libs/gameObjects/StandardMesh";
 import { Signal } from "../../libs/utils/Signal";
 import gsap from "gsap";

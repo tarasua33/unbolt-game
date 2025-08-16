@@ -51,6 +51,7 @@ export class LoadingScreenController extends Controller<ILoadingScreenController
         progressEndLoadSequence.addConsequents(awaitStep, awaitStepParams);
 
         // START
+        // this._mng.completeSteps.addOnce(this._onComplete, this);
         this._mng.start([
             progressStartLoadSequence,
             progressEndLoadSequence

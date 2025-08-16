@@ -4,6 +4,7 @@ import { ElementIDs } from "../models/HouseModel";
 import { HouseElement, HouseElementConfig } from "../objects/gameObjects/HouseElement";
 import { World } from "cannon-es";
 import { MainGameGroup } from "../objects/gameObjects/MainGameGroup";
+// import * as dat from "lil-gui";
 
 interface IParamsConfig {
     parent: MainGameGroup;
@@ -17,6 +18,7 @@ export class HouseElementsFactory extends AbstractStandardFactory<IHouseMap> {
     public buildUi(params: IParamsConfig): IHouseMap {
         const { parent, physicWorld } = params;
         const assetsLoader = this._assetsLoader;
+        // const gui = new dat.GUI()
 
         const roofTile = this._assetsLoader.assets.textures.tile!;
         roofTile.rotation = Math.PI / 2;
@@ -150,39 +152,50 @@ export class HouseElementsFactory extends AbstractStandardFactory<IHouseMap> {
             {
                 scaleX: 2.02,
                 scaleZ: 2.05,
+                x: 0,
+                y: 0,
+                z: 0,
                 element: assetsLoader.assets.gltf.floorPattern!,
                 elementId: ElementIDs.FLOOR_B,
-                physicWorld
+                physicWorld,
+                // gui
             },
             {
                 scaleX: 2.2,
                 scaleZ: 2.2,
                 y: 2.08,
+                z: 0,
+                x: 0,
                 element: assetsLoader.assets.gltf.floorBoard!,
                 elementId: ElementIDs.FLOOR_T,
-                physicWorld
+                physicWorld,
+                // gui
             },
             {
                 x: -1.24,
                 y: 2.8,
+                z: 0,
                 rotZ: 0.59,
                 elementId: ElementIDs.ROOF_L,
                 meshConfig: {
                     geometry: geometry,
                     material: roofMaterials
                 },
-                physicWorld
+                physicWorld,
+                // gui
             },
             {
                 x: 1.24,
                 y: 2.8,
+                z: 0,
                 rotZ: -0.59,
                 elementId: ElementIDs.ROOF_R,
                 meshConfig: {
                     geometry: geometry,
                     material: roofMaterials
                 },
-                physicWorld
+                physicWorld,
+                // gui
             }
         ]
 

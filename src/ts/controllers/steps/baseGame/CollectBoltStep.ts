@@ -11,6 +11,8 @@ export class CollectBoltStep<T extends CollectBoltStepParams = CollectBoltStepPa
     private _needUpdatePack = false;
 
     public start({ chests, idx }: T): void {
+        console.log(idx);
+        
         const chest = chests[idx]!;
         this._packIdx = idx;
 

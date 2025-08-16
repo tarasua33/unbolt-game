@@ -11,6 +11,6 @@ export abstract class Controller<T extends IControllerParams = IControllerParams
     constructor(models: IModels) {
         super(models);
 
-        this._mng.completeSteps.addOnce(this._onComplete, this);
+        this._mng.completeSteps.add(this._onComplete, this);
     }
 }

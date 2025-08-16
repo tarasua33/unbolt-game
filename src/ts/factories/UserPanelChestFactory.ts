@@ -20,6 +20,7 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
         const chestsNumber = boltModel.chestsNumber;
         const boltsInChestsNumber = boltModel.boltsInChestsNumber;
         const size = 16;
+        const circlesOpacity = 0.35;
         for (let i = 0; i < chestsNumber; i++) {
             circleMaterials.push([]);
             for (let j = 0; j < boltsInChestsNumber; j++) {
@@ -36,7 +37,7 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                                 "white",
                                 false)),
                         transparent: true,
-                        opacity: 0.25
+                        opacity: circlesOpacity
                     })
                 )
             }
@@ -84,7 +85,6 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                 ]
             }
         ]);
-        const circlesOpacity = 0.45;
 
         for (let i = 0; i < chestsNumber; i++) {
             userPanelChestConfigs.push(

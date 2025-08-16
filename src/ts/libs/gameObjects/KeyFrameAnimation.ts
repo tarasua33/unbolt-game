@@ -80,7 +80,7 @@ export class KeyFrameAnimation
                 valuesCombined.push(values);
             }
             else {
-                valuesCombined = values.concat(values as Array<number>)
+                valuesCombined = valuesCombined.concat(values as Array<number>)
             }
         }
 

@@ -18,10 +18,12 @@ import { AwaitTimeStep } from "./steps/general/AwaitTimeStep";
 interface IControllerBaseParams extends IControllerParams {
     gameUI: IGameUI;
     loadingScreen: LoadingScreen;
+    isReplay?: boolean
 }
 
 export class BaseGameController extends Controller<IControllerBaseParams> {
     private _listeningPointedBoltStep: ListeningPointedBoltStep;
+    private _collectBolt!: CollectBoltStep;
     private _gameUI!: IGameUI
 
     constructor(models: IModels) {
@@ -32,17 +34,19 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 
     public start(params: IControllerBaseParams): void {
         const models = this._models;
-        const { gameUI, loadingScreen } = this._params = params;
+        const { gameUI, loadingScreen, isReplay } = this._params = params;
         this._gameUI = gameUI;
 
         // SHOW GAME
-        // Consequents
         const showGameSequence = new Sequence();
-        const showScreenStep = new ScreenFadeInStep(models);
-        const showScreenParams: ScreenFadeInStepParams = {
-            screen: gameUI.transitionScreen
-        };
-        showGameSequence.addConsequents(showScreenStep, showScreenParams);
+        // Consequents
+        if (!isReplay) {
+            const showScreenStep = new ScreenFadeInStep(models);
+            const showScreenParams: ScreenFadeInStepParams = {
+                screen: gameUI.transitionScreen
+            };
+            showGameSequence.addConsequents(showScreenStep, showScreenParams);
+        }
 
         const resetMainGameStep = new ResetMainGameStep(models);
         const resetGameParams: ResetMainGameStepParams = {
@@ -85,15 +89,6 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
         ])
     }
 
-    protected _onComplete(): void {
-        console.warn("COMPLETE BASE GAME CONTROLLER");
-        const listeningPointedBoltStep = this._listeningPointedBoltStep;
-        listeningPointedBoltStep.unboltedElementSignal.remove(this._onUnboltedHouseElement);
-        listeningPointedBoltStep.unboltSignal.remove(this._onUnbolt);
-
-        super._onComplete();
-    }
-
     private _onUnbolt(bolt: Bolt, packIndex: number): void {
         const mng = this._mng;
 
@@ -101,8 +96,8 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
             bolt
         });
 
-        const collectBolt = new CollectBoltStep(this._models);
-        collectBolt.completeStepSignal.addOnce(this._completeUnbolt, this)
+        const collectBolt = this._collectBolt = new CollectBoltStep(this._models);
+        collectBolt.completeStepSignal.addOnce(this._completeUnbolt, this);
         mng.addDynamicStep(collectBolt, {
             chests: this._gameUI.userPanelChests,
             idx: packIndex
@@ -123,5 +118,25 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
             id,
             elements: this._params.gameUI.houseElements
         });
+    }
+
+    public forceComplete(): void {
+        this._onComplete();
+
+        this._mng.forceComplete();
+    }
+
+
+    protected _onComplete(): void {
+        console.warn("COMPLETE BASE GAME CONTROLLER");
+        const listeningPointedBoltStep = this._listeningPointedBoltStep;
+        listeningPointedBoltStep.unboltedElementSignal.remove(this._onUnboltedHouseElement);
+        listeningPointedBoltStep.unboltSignal.remove(this._onUnbolt);
+
+        if (this._collectBolt) {
+            this._collectBolt.completeStepSignal.remove(this._completeUnbolt);
+        }
+
+        super._onComplete();
     }
 }

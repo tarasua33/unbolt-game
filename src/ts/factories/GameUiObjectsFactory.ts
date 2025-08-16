@@ -15,6 +15,7 @@ import { StandardGroup } from "../libs/gameObjects/StandardGroup";
 import { UserPanelChestFactory } from "./UserPanelChestFactory";
 import { UserPanelChest } from "../objects/userPanel/UserPanelChest";
 import { ReplayButtonFactory } from "./ReplayButtonFactory";
+import { KeyFrameStandardMesh } from "../libs/gameObjects/KeyFrameStandardMesh";
 
 interface IGameFactoryConfig {
     scene: IGameGroup;
@@ -30,6 +31,7 @@ export interface IGameUI {
     transitionScreen: TransitionScreen;
     userPanel: StandardGroup;
     userPanelChests: UserPanelChest[];
+    replayButton: KeyFrameStandardMesh;
 }
 
 export class GameUiObjectsFactory extends AbstractBaseFactory {
@@ -44,19 +46,19 @@ export class GameUiObjectsFactory extends AbstractBaseFactory {
         const transitionScreenFactory = new TransitionScreenFactory(assetsLoader, models);
         const userPanelFactory = new UserPanelFactory(assetsLoader, models);
         const userPanelChestFactory = new UserPanelChestFactory(assetsLoader, models);
-                const replayButtonFactory = new ReplayButtonFactory(assetsLoader, models);
+        const replayButtonFactory = new ReplayButtonFactory(assetsLoader, models);
 
         const mainGroup = mainFactory.buildUi({ parent: scene, drag });
-        const userPanel = userPanelFactory.buildUi({parent: camera})
+        const userPanel = userPanelFactory.buildUi({ parent: camera })
 
         const ui = {
             mainGroup: mainGroup,
             houseElements: houseElementsFactory.buildUi({ parent: mainGroup, physicWorld }),
             bolts: boltsFactory.buildUi({ parent: mainGroup }),
-            transitionScreen: transitionScreenFactory.buildUi({parent: camera}),
+            transitionScreen: transitionScreenFactory.buildUi({ parent: camera }),
             userPanel,
-            userPanelChests: userPanelChestFactory.buildUi({parent: userPanel}),
-            replayButton: replayButtonFactory.buildUi({parent: userPanel})
+            userPanelChests: userPanelChestFactory.buildUi({ parent: userPanel }),
+            replayButton: replayButtonFactory.buildUi({ parent: userPanel })
         }
 
         return ui;

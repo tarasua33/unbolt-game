@@ -2,9 +2,9 @@ import { StandardGroup, StandardGroupConfig } from "../../libs/gameObjects/Stand
 import { ElementIDs } from "../../models/HouseModel";
 // import { Object3D, BufferGeometry, Material } from 'three';
 import { Object3D, BufferGeometry, Material, Box3, Vector3 } from 'three';
-import * as dat from "lil-gui";
 import { StandardMesh } from "../../libs/gameObjects/StandardMesh";
 import { Body, Box, Vec3, World } from "cannon-es";
+import * as dat from "lil-gui";
 
 export interface HouseElementConfig extends StandardGroupConfig {
     physicWorld: World;
@@ -160,6 +160,9 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
         super.reset();
 
         const body = this._groupBody;
+        body.mass = 0;
+        body.updateMassProperties();
+        body.type = Body.STATIC;
 
         const { x, y, z } = this.position;
         body.position.set(x, y, z);
@@ -174,8 +177,6 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
         body.mass = 0;
         body.velocity.set(0, 0, 0);
         body.angularVelocity.set(0, 0, 0);
-        body.updateMassProperties();
-        body.type = Body.STATIC;
 
         this.visible = true;
     }

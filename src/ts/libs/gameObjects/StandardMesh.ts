@@ -52,6 +52,7 @@ export class StandardMesh<T extends StandardMeshConfig = StandardMeshConfig> ext
     /* eslint-enable */
 
     public onPointed(): void {
+        console.log("click");
         this.raycasterSignal.dispatch()
     }
 }
