@@ -1,7 +1,5 @@
-import { BaseStep, BaseStepParams } from "../../libs/controllers/BaseStep";
-import { StandardMesh } from "../../libs/gameObjects/StandardMesh";
-import { UserPanelChest } from "../../objects/userPanel/UserPanelChest";
-import { Signal } from "../../libs/utils/Signal";
+import { BaseStep, BaseStepParams } from "../../../libs/controllers/BaseStep";
+import { UserPanelChest } from "../../../objects/userPanel/UserPanelChest";
 
 interface CollectBoltStepParams extends BaseStepParams {
     chests: UserPanelChest[];
@@ -9,16 +7,13 @@ interface CollectBoltStepParams extends BaseStepParams {
 }
 
 export class CollectBoltStep<T extends CollectBoltStepParams = CollectBoltStepParams> extends BaseStep<CollectBoltStepParams> {
-    public readonly needUpdatePackSignal = new Signal();
-    private _progress = 0;
     private _packIdx!: number;
     private _needUpdatePack = false;
-    private _collectView!: StandardMesh;
 
     public start({ chests, idx }: T): void {
         const chest = chests[idx]!;
         this._packIdx = idx;
-        
+
         chest.completeAnimation.addOnce(this._onComplete, this);
         chest.collectBolt();
 
@@ -35,10 +30,7 @@ export class CollectBoltStep<T extends CollectBoltStepParams = CollectBoltStepPa
     }
 
     protected _onComplete(): void {
-        this.needUpdatePackSignal.dispatch(this._needUpdatePack, this._packIdx);
-
+        super._onComplete(this._needUpdatePack, this._packIdx);
         this._needUpdatePack = false;
-
-        super._onComplete()
     }
 }

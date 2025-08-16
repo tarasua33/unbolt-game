@@ -1,7 +1,7 @@
-import { BaseStep, BaseStepParams } from "../../libs/controllers/BaseStep";
-import { Signal } from "../../libs/utils/Signal";
-import { COLORS } from "../../models/BoltsModel";
-import { Bolt } from "../../objects/gameObjects/Bolt";
+import { BaseStep, BaseStepParams } from "../../../libs/controllers/BaseStep";
+import { Signal } from "../../../libs/utils/Signal";
+import { COLORS } from "../../../models/BoltsModel";
+import { Bolt } from "../../../objects/gameObjects/Bolt";
 
 export interface IListeningPointedBoltStepParams extends BaseStepParams {
     bolts: Bolt[];
@@ -24,8 +24,6 @@ export class ListeningPointedBoltStep<T extends IListeningPointedBoltStepParams 
 
     private _onBoltPointed(bolt: Bolt): void {
         if (bolt.bolted) {
-            console.log("POINTED");
-
             const targetPackIndex = this._getTargetChestIndex(bolt.color);
             const isTargetColor = targetPackIndex !== -1;
             const preventerElementId = bolt.preventerElementId;

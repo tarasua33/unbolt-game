@@ -5,13 +5,15 @@ import { ElementIDs } from "../models/HouseModel";
 import { IModels } from "../models/Models";
 import { Bolt } from "../objects/gameObjects/Bolt";
 import { LoadingScreen } from "../objects/screens/LoadingScreen";
-import { CollectBoltStep } from "./steps/CollectBoltStep";
-import { HouseElementUnboltedStep } from "./steps/HouseElementUnboltedStep";
-import { IListeningPointedBoltStepParams, ListeningPointedBoltStep } from "./steps/ListeningPointedBoltStep";
+import { CollectBoltStep } from "./steps/baseGame/CollectBoltStep";
+import { HouseElementUnboltedStep } from "./steps/baseGame/HouseElementUnboltedStep";
+import { IListeningPointedBoltStepParams, ListeningPointedBoltStep } from "./steps/baseGame/ListeningPointedBoltStep";
 import { ResetMainGameStep, ResetMainGameStepParams } from "./steps/transitions/ResetMainGameStep";
 import { ScreenFadeInStep, ScreenFadeInStepParams } from "./steps/transitions/ScreenFadeInStep";
 import { ScreenFadeOutStep, ScreenFadeOutStepParams } from "./steps/transitions/ScreenFadeOutStep";
-import { UnboltStep } from "./steps/UnboltStep";
+import { UnboltStep } from "./steps/baseGame/UnboltStep";
+import { UpdateChestStep } from "./steps/baseGame/UpdateChestStep";
+import { AwaitTimeStep } from "./steps/general/AwaitTimeStep";
 
 interface IControllerBaseParams extends IControllerParams {
     gameUI: IGameUI;
@@ -46,7 +48,8 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
         const resetGameParams: ResetMainGameStepParams = {
             mainGameView: gameUI.mainGroup,
             userPanel: gameUI.userPanel,
-            loadingScreen
+            loadingScreen,
+            chests: gameUI.userPanelChests
         };
         showGameSequence.addConsequents(resetMainGameStep, resetGameParams);
 
@@ -67,10 +70,18 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 
         playGameSequence.addPermanent(listeningPointedBoltStep, listeningPointedParams);
 
+        // PLAY GAME
+        // Permanent
+        const endGameSequence = new Sequence();
+        endGameSequence.addConsequents(new AwaitTimeStep(models), {
+            delay: 2
+        })
+
         // START
         this._mng.start([
             showGameSequence,
-            playGameSequence
+            playGameSequence,
+            endGameSequence
         ])
     }
 
@@ -91,10 +102,20 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
         });
 
         const collectBolt = new CollectBoltStep(this._models);
+        collectBolt.completeStepSignal.addOnce(this._completeUnbolt, this)
         mng.addDynamicStep(collectBolt, {
             chests: this._gameUI.userPanelChests,
             idx: packIndex
         })
+    }
+
+    private _completeUnbolt(needUpdatePack: boolean, packIdx: number): void {
+        if (needUpdatePack) {
+            this._mng.addDynamicStep(new UpdateChestStep(this._models), {
+                chests: this._gameUI.userPanelChests,
+                idx: packIdx
+            })
+        }
     }
 
     private _onUnboltedHouseElement(id: ElementIDs): void {

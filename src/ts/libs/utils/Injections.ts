@@ -27,7 +27,6 @@ function _setBaseConfig(ctx: any): void {
 
     if (typeof visible === "boolean") ctx.visible = visible;
 }
-// /* eslint-enable */
 
 export function injectAll(): any {
     injector(StandardGroup, _setBaseConfig);

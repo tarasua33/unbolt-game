@@ -17,9 +17,9 @@ export abstract class BaseStep<T extends BaseStepParams = BaseStepParams> {
 
     public abstract start(params: T): void
 
-    protected _onComplete(): void {
-        this.completeStepSignal.dispatch(this);
-        console.log(this)
+    protected _onComplete(...args: any[]): void {
+        this.completeStepSignal.dispatch(...args);
+        console.log("complete", this)
     }
 
     public forceComplete(): void {

@@ -1,6 +1,6 @@
-import { IHouseMap } from "../../factories/HouseElementsFactory";
-import { BaseStep, BaseStepParams } from "../../libs/controllers/BaseStep";
-import { ElementIDs } from "../../models/HouseModel";
+import { IHouseMap } from "../../../factories/HouseElementsFactory";
+import { BaseStep, BaseStepParams } from "../../../libs/controllers/BaseStep";
+import { ElementIDs } from "../../../models/HouseModel";
 
 interface HouseElementUnboltedStepParams extends BaseStepParams {
     elements: IHouseMap;

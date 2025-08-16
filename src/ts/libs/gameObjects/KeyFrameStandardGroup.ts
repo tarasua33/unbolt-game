@@ -1,12 +1,12 @@
-import { StandardMesh, StandardMeshConfig } from './StandardMesh';
 import { Signal } from '../utils/Signal';
+import { StandardGroup, StandardGroupConfig } from './StandardGroup';
 import { KeyFrameAnimation, KeyFrameAnimationConfig } from './KeyFrameAnimation';
 
-export interface KeyFrameStandardMeshConfig extends StandardMeshConfig {
-    animations: KeyFrameAnimationConfig
+export interface KeyFrameStandardGroupConfig extends StandardGroupConfig {
+    animations: KeyFrameAnimationConfig;
 }
 
-export class KeyFrameStandardMesh<T extends KeyFrameStandardMeshConfig = KeyFrameStandardMeshConfig> extends StandardMesh<T> {
+export class KeyFrameStandardGroup<T extends KeyFrameStandardGroupConfig = KeyFrameStandardGroupConfig> extends StandardGroup<T> {
     public readonly completeAnimation = new Signal();
     public animator!: KeyFrameAnimation;
 

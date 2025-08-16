@@ -26,7 +26,7 @@ export class StepsManager {
 
     public addDynamicStep<S extends BaseStep<P>, P extends BaseStepParams>(step: S, params: P): void {
         this._dynamicSteps.add(step);
-
+        console.log("start", step);
         step.completeStepSignal.addOnce(this._onCompleteDynamicStep, this);
         step.start(params);
     }
@@ -68,6 +68,7 @@ export class StepsManager {
 
             const step = permanents[i]!.step;
             const params = permanents[i]!.params;
+            console.log("start", step);
             step.completeStepSignal.addOnce(this._onPermanentStepComplete, this);
             step.start(params);
         }
@@ -89,7 +90,7 @@ export class StepsManager {
             const step = consequentsSteps[stepIndex]!.step;
             const params = consequentsSteps[stepIndex]!.params;
 
-            console.log(step);
+            console.log("start", step);
 
             step.completeStepSignal.addOnce(this._onConsequentStepComplete, this);
             step.start(params);
@@ -124,7 +125,7 @@ export class StepsManager {
             step.forceComplete();
         }
         this._dynamicSteps.clear();
-        
+
         this.completeSteps.dispatch();
     }
 

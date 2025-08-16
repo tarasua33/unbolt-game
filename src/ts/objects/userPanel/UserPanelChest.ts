@@ -1,22 +1,21 @@
-import { Material } from "three";
-import { StandardGroup, StandardGroupConfig } from "../../libs/gameObjects/StandardGroup";
+import { MeshBasicMaterial } from "three";
 import { StandardMesh, StandardMeshConfig } from "../../libs/gameObjects/StandardMesh";
 import { IPoint } from "../../libs/utils/GameHelpers";
-import { Signal } from "../../libs/utils/Signal";
 import { KeyFrameStandardMesh, KeyFrameStandardMeshConfig } from "../../libs/gameObjects/KeyFrameStandardMesh";
+import { KeyFrameStandardGroup, KeyFrameStandardGroupConfig } from "../../libs/gameObjects/KeyFrameStandardGroup";
+import { COLORS } from "../../models/BoltsModel";
 
-export interface UserPanelChestConfig extends StandardGroupConfig {
+export interface UserPanelChestConfig extends KeyFrameStandardGroupConfig {
     chestConfig: StandardMeshConfig;
     circleConfig: KeyFrameStandardMeshConfig;
     circlesPositions: IPoint[];
     circlesOpacity: number;
-    circleMaterials: Material[][],
+    circleMaterials: MeshBasicMaterial[][],
     chestIdx: number
 }
 
 
-export class UserPanelChest extends StandardGroup<UserPanelChestConfig> {
-    public completeAnimation = new Signal();
+export class UserPanelChest extends KeyFrameStandardGroup<UserPanelChestConfig> {
     private _circles: KeyFrameStandardMesh[] = [];
     private _collected = 0;
 
@@ -40,28 +39,40 @@ export class UserPanelChest extends StandardGroup<UserPanelChestConfig> {
             circle.position.set(x, y, circle.position.z);
             this._circles.push(circle);
         }
-
-        // (this._config.circleConfig.material as MeshBasicMaterial).color.set("green")
     }
 
     public collectBolt(): void {
         const circle = this._circles[this._collected]!;
         this._collected++;
 
-        // return circle;
         circle.completeAnimation.addOnce(this._onCompleteCollect, this);
-        circle.playAnimation("collect");
+        circle.animator.playAnimation("collect");
     }
 
-    private _onCompleteCollect(): void
-    {
+    public setTargetPackConfig(color: COLORS): void {
+        this._collected = 0
+        for (const circle of this._circles) {
+            (circle.material as MeshBasicMaterial).color.set(color);
+            (circle.material as MeshBasicMaterial).opacity = this._config.circlesOpacity;
+        }
+    }
+
+    private _onCompleteCollect(): void {
         this.completeAnimation.dispatch();
+    }
+
+    public closeChestAnimation(): void {
+        this.animator.playAnimation("close");
+    }
+
+    public openChestAnimation(): void {
+        this.animator.playAnimation("open");
     }
 
     public reset(): void {
         this._collected = 0;
         for (const circle of this._circles) {
-            (circle.material as Material).opacity = this._config.circlesOpacity;
+            (circle.material as MeshBasicMaterial).opacity = this._config.circlesOpacity;
         }
 
         super.reset();

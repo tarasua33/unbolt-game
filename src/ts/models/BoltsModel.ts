@@ -3,7 +3,7 @@ export enum COLORS {
     red = "#f70269",
     blue = "#028df7",
     yellow = "#f7e302",
-    grey = "#a5b4b5",
+    grey = "#d703fc",
 }
 
 export const BOLTS_COLORS_AMOUNT = [

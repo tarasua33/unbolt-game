@@ -3,7 +3,7 @@ import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFacto
 import { StandardGroup } from "../libs/gameObjects/StandardGroup";
 import { UserPanelChest, UserPanelChestConfig } from "../objects/userPanel/UserPanelChest";
 import { createCircleGraphic } from "../libs/utils/GameHelpers";
-import { IAnimationConfig } from "../libs/gameObjects/KeyFrameStandardMesh";
+import { IAnimationConfig } from "../libs/gameObjects/KeyFrameAnimation";
 
 interface IParamsConfig {
     parent: StandardGroup;
@@ -43,14 +43,57 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
         }
 
         const userPanelChestConfigs: UserPanelChestConfig[] = [];
-        const deltaX = 0.4
+        const deltaX = 0.4;
+        const chestScale = 0.35;
+        const chestAnimations = new Map<string, IAnimationConfig>()
+        chestAnimations.set("close", [
+            {
+                propertyKey: ".scale",
+                steps: [
+                    {
+                        duration: 0,
+                        valuesProperty: [chestScale, chestScale, chestScale]
+                    },
+                    {
+                        duration: 0.15,
+                        valuesProperty: [chestScale + 0.02, chestScale + 0.02, chestScale + 0.02]
+                    },
+                    {
+                        duration: 0.15,
+                        valuesProperty: [0, 0, 0]
+                    }
+                ]
+            }
+        ]);
+        chestAnimations.set("open", [
+            {
+                propertyKey: ".scale",
+                steps: [
+                    {
+                        duration: 0,
+                        valuesProperty: [0, 0, 0]
+                    },
+                    {
+                        duration: 0.15,
+                        valuesProperty: [chestScale + 0.02, chestScale + 0.02, chestScale + 0.02]
+                    },
+                    {
+                        duration: 0.15,
+                        valuesProperty: [chestScale, chestScale, chestScale]
+                    }
+                ]
+            }
+        ]);
+        const circlesOpacity = 0.45;
+
         for (let i = 0; i < chestsNumber; i++) {
             userPanelChestConfigs.push(
                 {
+                    animations: chestAnimations,
                     chestIdx: i,
-                    scaleX: 0.35,
-                    scaleY: 0.35,
-                    scaleZ: 0.35,
+                    scaleX: chestScale,
+                    scaleY: chestScale,
+                    scaleZ: chestScale,
                     x: -0.4 + deltaX * i,
                     y: 1.05,
                     chestConfig: {
@@ -72,11 +115,11 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                                         steps: [
                                             {
                                                 duration: 0,
-                                                valuesProperty: 0.25
+                                                valuesProperty: circlesOpacity
                                             },
                                             {
                                                 duration: 0.25,
-                                                valuesProperty: 0.5
+                                                valuesProperty: 0.85
                                             },
                                             {
                                                 duration: 0.5,
@@ -110,7 +153,7 @@ export class UserPanelChestFactory extends AbstractStandardFactory<UserPanelChes
                         { x: 0, y: -0.11 },
                         { x: 0.23, y: -0.11 }
                     ],
-                    circlesOpacity: 0.25,
+                    circlesOpacity,
                     circleMaterials
                 }
             )
