@@ -8,7 +8,6 @@ import { RaycasterDispatcher } from './libs/utils/RaycasterDispatcher';
 import { HouseModel } from './models/HouseModel';
 import { BoltsModel } from './models/BoltsModel';
 import { MainCamera } from './libs/gameObjects/MainCamera';
-import { injectAll } from './libs/utils/Injections';
 import { LoadingState } from './controllers/LoadingState';
 import { BaseGameState } from './controllers/BaseGameState';
 
@@ -51,7 +50,6 @@ export class Game {
      * @param {string} canvasName - ClassName or Id canvas dom
     */
     constructor(canvasName: string) {
-        injectAll();
         const canvas = document.querySelector(canvasName) as HTMLCanvasElement;
         const scene = this._scene = new StandardScene();
 

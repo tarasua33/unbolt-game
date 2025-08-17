@@ -39,7 +39,7 @@ export class StandardGroup<T extends StandardGroupConfig = StandardGroupConfig> 
 
     /* eslint-disable */
     private _setBaseConfig(ctx: any): void {
-        //pass
+        // 
     }
     /* eslint-enable */
 

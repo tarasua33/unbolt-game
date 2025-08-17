@@ -2,6 +2,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
+const webpack = require('webpack'); 
 
 module.exports = {
     entry: path.resolve(__dirname, '../src/script.ts'),
@@ -9,7 +10,7 @@ module.exports = {
     {
         hashFunction: 'xxhash64',
         filename: 'bundle.[contenthash].js',
-        path: path.resolve(__dirname, '../docs')
+        path: path.resolve(__dirname, '../dist')
     },
     devtool: 'source-map',
     plugins:
@@ -27,7 +28,10 @@ module.exports = {
                 template: path.resolve(__dirname, '../src/index.html'),
                 minify: true
             }),
-            new MiniCSSExtractPlugin()
+            new MiniCSSExtractPlugin(),
+            new webpack.DefinePlugin({
+                __DEPLOY_ROOT__: JSON.stringify(process.env.DEPLOY_ROOT || "")
+            })
         ],
     module:
     {

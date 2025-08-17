@@ -1,0 +1,1 @@
+declare const __DEPLOY_ROOT__: string;

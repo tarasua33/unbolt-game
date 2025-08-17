@@ -42,7 +42,7 @@ export class StandardMesh<T extends StandardMeshConfig = StandardMeshConfig> ext
 
     /* eslint-disable */
     private _setBaseConfig(ctx: any): void {
-        //pass
+        // 
     }
 
     /* eslint-disable */
@@ -52,7 +52,7 @@ export class StandardMesh<T extends StandardMeshConfig = StandardMeshConfig> ext
     /* eslint-enable */
 
     public onPointed(): void {
-        console.log("click");
+        console.log("pointed");
         this.raycasterSignal.dispatch()
     }
 }

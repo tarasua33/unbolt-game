@@ -1,8 +1,8 @@
 import { StandardGroup } from "../gameObjects/StandardGroup";
 import { StandardMesh } from "../gameObjects/StandardMesh";
 
-export function injector(cls: new (...args: any[]) => any, fnc: Function): void {
-    cls.prototype[fnc.name] = fnc;
+export function injector(cls: new (...args: any[]) => any, fnc: Function, name: string): void {
+    cls.prototype[name] = fnc;
 }
 
 
@@ -29,6 +29,6 @@ function _setBaseConfig(ctx: any): void {
 }
 
 export function injectAll(): any {
-    injector(StandardGroup, _setBaseConfig);
-    injector(StandardMesh, _setBaseConfig);
+    injector(StandardGroup, _setBaseConfig, "_setBaseConfig");
+    injector(StandardMesh, _setBaseConfig, "_setBaseConfig");
 }

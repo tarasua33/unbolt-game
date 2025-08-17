@@ -1,8 +1,10 @@
 import './style.css';
 import { Game } from "./ts/Game";
 import Stats from 'stats.js';
+import { injectAll } from './ts/libs/utils/Injections';
 
 
+injectAll();
 const game = new Game('.canvas');
 
 const stats = new Stats();
