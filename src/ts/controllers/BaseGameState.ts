@@ -28,11 +28,15 @@ export class BaseGameState extends BaseState {
         dispatchers.drag.startDispatch();
         dispatchers.raycaster.startDispatch(tapElements);
 
+        this._models.houseModel.reset();
+        this._models.boltsModel.reset();
+
+        // START BASE GAME CONTROLLERS
         baseGameController.completeStepSignal.add(this._onGameSuccess, this);
         userInterfaceController.stopGameSignal.add(this._onStopGame, this);
 
         baseGameController.start({ gameUI, loadingScreen });
-        userInterfaceController.start({ gameUI, loadingScreen, button: gameUI.replayButton });
+        userInterfaceController.start({ gameUI, button: gameUI.replayButton });
     }
 
     private _buildGameObjects(scene: StandardScene, dispatchers: IDispatchers): IGameUI {
@@ -83,7 +87,7 @@ export class BaseGameState extends BaseState {
         baseGameController.completeStepSignal.add(this._onGameSuccess, this);
         userInterfaceController.stopGameSignal.add(this._onStopGame, this);
         baseGameController.start({ gameUI, loadingScreen, isReplay: true });
-        userInterfaceController.start({ gameUI, loadingScreen, button: gameUI.replayButton });
+        userInterfaceController.start({ gameUI, button: gameUI.replayButton });
     }
 
     private _onGameSuccess(): void {
@@ -106,6 +110,6 @@ export class BaseGameState extends BaseState {
         baseGameController.completeStepSignal.add(this._onGameSuccess, this);
         userInterfaceController.stopGameSignal.add(this._onStopGame, this);
         baseGameController.start({ gameUI, loadingScreen });
-        userInterfaceController.start({ gameUI, loadingScreen, button: gameUI.replayButton });
+        userInterfaceController.start({ gameUI, button: gameUI.replayButton });
     }
 }

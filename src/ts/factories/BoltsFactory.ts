@@ -1,4 +1,4 @@
-import { CylinderGeometry, MeshPhongMaterial } from "three";
+import { CylinderGeometry, Material, MeshPhongMaterial } from "three";
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
 import { IGameGroup } from "../libs/gameObjects/IGameGroup";
 import { ElementIDs } from "../models/HouseModel";
@@ -13,120 +13,6 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
 
     public buildUi(params: IParamsConfig): Bolt[] {
         const { parent } = params;
-        const assetsLoader = this._assetsLoader;
-
-        const bodyGeometry = new CylinderGeometry(0.2, 0.1, 0.4, 16);
-        const greenBodyMaterial = new MeshPhongMaterial({
-            color: COLORS.green,
-            map: assetsLoader.assets.textures.boltBody!,
-            transparent: true
-        })
-
-        const boltHead = assetsLoader.assets.textures.boltHead!
-        const headGeometry = new CylinderGeometry(0.25, 0.35, 0.25, 16);
-        const greenHeadMaterials = [
-            new MeshPhongMaterial({
-                color: COLORS.green,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.green,
-                map: boltHead,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.green,
-                transparent: true
-            }),
-        ];
-
-        const redBodyMaterial = greenBodyMaterial.clone();
-        redBodyMaterial.color.set(COLORS.red);
-        const redHeadMaterials = [
-            new MeshPhongMaterial({
-                color: COLORS.red,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.red,
-                map: boltHead,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.red,
-                transparent: true
-            }),
-        ];
-
-        const yellowBodyMaterial = greenBodyMaterial.clone();
-        yellowBodyMaterial.color.set(COLORS.yellow);
-        const yellowHeadMaterials = [
-            new MeshPhongMaterial({
-                color: COLORS.yellow,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.yellow,
-                transparent: true,
-                map: boltHead,
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.yellow,
-                transparent: true
-            }),
-        ];
-
-        const blueBodyMaterial = greenBodyMaterial.clone();
-        blueBodyMaterial.color.set(COLORS.blue);
-        const blueHeadMaterials = [
-            new MeshPhongMaterial({
-                color: COLORS.blue,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.blue,
-                map: boltHead,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.blue,
-                transparent: true
-            }),
-        ];
-
-        const greyBodyMaterial = greenBodyMaterial.clone();
-        greyBodyMaterial.color.set(COLORS.grey);
-        const greyHeadMaterials = [
-            new MeshPhongMaterial({
-                color: COLORS.grey,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.grey,
-                map: boltHead,
-                transparent: true
-            }),
-            new MeshPhongMaterial({
-                color: COLORS.grey,
-                transparent: true
-            }),
-        ];
-
-        const bodyMaterialsMap = new Map<COLORS, MeshPhongMaterial>([
-            [COLORS.green, greenBodyMaterial],
-            [COLORS.red, redBodyMaterial],
-            [COLORS.blue, blueBodyMaterial],
-            [COLORS.yellow, yellowBodyMaterial],
-            [COLORS.grey, greyBodyMaterial],
-        ])
-
-        const headMaterialsMap = new Map([
-            [COLORS.green, greenHeadMaterials],
-            [COLORS.red, redHeadMaterials],
-            [COLORS.blue, blueHeadMaterials],
-            [COLORS.yellow, yellowHeadMaterials],
-            [COLORS.grey, greyHeadMaterials],
-        ])
 
         const setUpPositionsConfigs = [
             // FLOOR_B
@@ -410,15 +296,22 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
                 rotY: 0
             },
         ];
-
+        const bodyGeometry = new CylinderGeometry(0.2, 0.1, 0.4, 16);
+        const materials = this._getMaterials(setUpPositionsConfigs.length);
+        const headGeometry = new CylinderGeometry(0.25, 0.35, 0.25, 16);
 
         const configs: BoltConfig[] = [];
         const boltColorsAmount = this._models.boltsModel.boltsColorsAmount;
-        for (const pos of setUpPositionsConfigs) {
+
+        for (let i = 0; i < setUpPositionsConfigs.length; i++) {
+            const pos = setUpPositionsConfigs[i]!
+            const { headMaterial, bodyMaterial } = materials[i]!;
             const colorIndex = Math.floor(Math.random() * boltColorsAmount.length);
             const color = boltColorsAmount.splice(colorIndex, 1)[0]!;
 
             configs.push({
+                headMaterial,
+                bodyMaterial,
                 color: color,
                 boltedElementId: pos.boltedElementId,
                 x: pos.x,
@@ -434,12 +327,12 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
                 bodyConfig: {
                     y: -0.2,
                     geometry: bodyGeometry,
-                    material: bodyMaterialsMap.get(color)!,
+                    material: headMaterial.get(color)!,
                 },
                 headConfig: {
                     y: 0.1,
                     geometry: headGeometry,
-                    material: headMaterialsMap.get(color)!
+                    material: headMaterial.get(color)!
                 },
                 preventerElementId: pos.preventerElementId!
                 // gui: pos.gui!
@@ -456,5 +349,130 @@ export class BoltsFactory extends AbstractStandardFactory<Bolt[]> {
         }
 
         return bolts
+    }
+
+    private _getMaterials(countBolts: number): { headMaterial: Map<COLORS, Material[]>, bodyMaterial: Map<COLORS, Material> }[] {
+        const assetsLoader = this._assetsLoader;
+        const materials: { headMaterial: Map<COLORS, Material[]>, bodyMaterial: Map<COLORS, Material> }[] = [];
+        for (let i = 0; i < countBolts; i++) {
+
+            const greenBodyMaterial = new MeshPhongMaterial({
+                color: COLORS.green,
+                map: assetsLoader.assets.textures.boltBody!,
+                transparent: true
+            })
+
+            const boltHead = assetsLoader.assets.textures.boltHead!
+            const greenHeadMaterials = [
+                new MeshPhongMaterial({
+                    color: COLORS.green,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.green,
+                    map: boltHead,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.green,
+                    transparent: true
+                }),
+            ];
+
+            const redBodyMaterial = greenBodyMaterial.clone();
+            redBodyMaterial.color.set(COLORS.red);
+            const redHeadMaterials = [
+                new MeshPhongMaterial({
+                    color: COLORS.red,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.red,
+                    map: boltHead,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.red,
+                    transparent: true
+                }),
+            ];
+
+            const yellowBodyMaterial = greenBodyMaterial.clone();
+            yellowBodyMaterial.color.set(COLORS.yellow);
+            const yellowHeadMaterials = [
+                new MeshPhongMaterial({
+                    color: COLORS.yellow,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.yellow,
+                    transparent: true,
+                    map: boltHead,
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.yellow,
+                    transparent: true
+                }),
+            ];
+
+            const blueBodyMaterial = greenBodyMaterial.clone();
+            blueBodyMaterial.color.set(COLORS.blue);
+            const blueHeadMaterials = [
+                new MeshPhongMaterial({
+                    color: COLORS.blue,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.blue,
+                    map: boltHead,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.blue,
+                    transparent: true
+                }),
+            ];
+
+            const greyBodyMaterial = greenBodyMaterial.clone();
+            greyBodyMaterial.color.set(COLORS.grey);
+            const greyHeadMaterials = [
+                new MeshPhongMaterial({
+                    color: COLORS.grey,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.grey,
+                    map: boltHead,
+                    transparent: true
+                }),
+                new MeshPhongMaterial({
+                    color: COLORS.grey,
+                    transparent: true
+                }),
+            ];
+
+            const bodyMaterialsMap = new Map<COLORS, Material>([
+                [COLORS.green, greenBodyMaterial],
+                [COLORS.red, redBodyMaterial],
+                [COLORS.blue, blueBodyMaterial],
+                [COLORS.yellow, yellowBodyMaterial],
+                [COLORS.grey, greyBodyMaterial],
+            ])
+
+            const headMaterialsMap = new Map<COLORS, Material[]>([
+                [COLORS.green, greenHeadMaterials],
+                [COLORS.red, redHeadMaterials],
+                [COLORS.blue, blueHeadMaterials],
+                [COLORS.yellow, yellowHeadMaterials],
+                [COLORS.grey, greyHeadMaterials],
+            ])
+
+            materials.push({
+                bodyMaterial: bodyMaterialsMap,
+                headMaterial: headMaterialsMap
+            })
+        }
+
+        return materials
     }
 }

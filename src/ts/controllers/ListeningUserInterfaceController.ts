@@ -3,15 +3,12 @@ import { Controller, IControllerParams } from "../libs/controllers/Controller";
 import { Sequence } from "../libs/controllers/Sequence";
 import { KeyFrameStandardMesh } from "../libs/gameObjects/KeyFrameStandardMesh";
 import { Signal } from "../libs/utils/Signal";
-import { LoadingScreen } from "../objects/screens/LoadingScreen";
 import { AwaitCompleteStep, AwaitCompleteStepParams } from "./steps/general/AwaitCompleteStep";
-import { ResetMainGameStep, ResetMainGameStepParams } from "./steps/transitions/ResetMainGameStep";
 import { ScreenFadeInStep, ScreenFadeInStepParams } from "./steps/transitions/ScreenFadeInStep";
 
 export interface IListeningUserInterfaceControllerParams extends IControllerParams {
     button: KeyFrameStandardMesh;
     gameUI: IGameUI;
-    loadingScreen: LoadingScreen;
 }
 
 export class ListeningUserInterfaceController extends Controller<IListeningUserInterfaceControllerParams> {
@@ -20,7 +17,7 @@ export class ListeningUserInterfaceController extends Controller<IListeningUserI
     private _awaitCompleteLoad!: AwaitCompleteStep;
     
     public start(params: IListeningUserInterfaceControllerParams): void {
-        const { button, gameUI, loadingScreen } = this._params = params;
+        const { button, gameUI } = this._params = params;
         const models = this._models
 
         // FIRST
@@ -34,27 +31,18 @@ export class ListeningUserInterfaceController extends Controller<IListeningUserI
         startListeningSequence.addPermanent(awaitCompleteLoad, awaitCompleteLoadParams);
 
         // // SECOND
-        const resetGameSequence = new Sequence();
+        const hideGameSequence = new Sequence();
         // // Consequents
         const showScreenStep = new ScreenFadeInStep(models);
         const showScreenParams: ScreenFadeInStepParams = {
             screen: gameUI.transitionScreen
         };
-        resetGameSequence.addConsequents(showScreenStep, showScreenParams);
-
-        const resetMainGameStep = new ResetMainGameStep(models);
-        const resetGameParams: ResetMainGameStepParams = {
-            mainGameView: gameUI.mainGroup,
-            userPanel: gameUI.userPanel,
-            loadingScreen,
-            chests: gameUI.userPanelChests
-        };
-        resetGameSequence.addConsequents(resetMainGameStep, resetGameParams);
+        hideGameSequence.addConsequents(showScreenStep, showScreenParams);
 
         // START
         this._mng.start([
             startListeningSequence,
-            resetGameSequence
+            hideGameSequence
         ])
     }
 

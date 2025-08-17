@@ -13,8 +13,9 @@ export interface BoltConfig extends StandardGroupConfig {
     boltedElementId: ElementIDs;
     preventerElementId: ElementIDs | undefined;
     color: COLORS;
+    bodyMaterial: Map<COLORS, Material>;
+    headMaterial: Map<COLORS, Material[]>;
 }
-
 
 export class Bolt extends StandardGroup<BoltConfig> {
     public raycasterSignal = new Signal();
@@ -50,6 +51,10 @@ export class Bolt extends StandardGroup<BoltConfig> {
         return this._color;
     }
 
+    public set color(value: COLORS) {
+        this._color = value;
+    }
+
     public buildObject(): void {
         super.buildObject();
 
@@ -62,8 +67,8 @@ export class Bolt extends StandardGroup<BoltConfig> {
         const animationGroup = this._animationGroup = new StandardGroup({});
         this.addObject(animationGroup);
 
-        const bodyMaterial = (bodyConfig.material as Material);
-        bodyConfig.material = bodyMaterial.clone();
+        // const bodyMaterial = (bodyConfig.material as Material);
+        // bodyConfig.material = bodyMaterial.clone();
         const body = this._body = new StandardMesh(bodyConfig);
         body.buildObject();
         animationGroup.addObject(body);
@@ -148,11 +153,15 @@ export class Bolt extends StandardGroup<BoltConfig> {
 
         gsap.killTweensOf(this);
 
-        (this._body.material as Material).opacity = 1;
-        const materials = this._head.material as Material[];
-        for (const material of materials) {
+        const { bodyMaterial, headMaterial } = this._config;
+        const bM = bodyMaterial.get(this._color)!;
+        const hM = headMaterial.get(this._color)!;
+        bM.opacity = 1;
+        for (const material of hM) {
             material.opacity = 1;
         }
+        this._body.material = bM;
+        this._head.material = hM;
 
         this._bolted = true;
         const animationGroup = this._animationGroup;

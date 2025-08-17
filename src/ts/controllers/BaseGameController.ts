@@ -53,7 +53,8 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
             mainGameView: gameUI.mainGroup,
             userPanel: gameUI.userPanel,
             loadingScreen,
-            chests: gameUI.userPanelChests
+            chests: gameUI.userPanelChests,
+            bolts: gameUI.bolts
         };
         showGameSequence.addConsequents(resetMainGameStep, resetGameParams);
 
