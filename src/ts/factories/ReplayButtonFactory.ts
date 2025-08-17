@@ -16,7 +16,7 @@ export class ReplayButtonFactory extends AbstractStandardFactory<KeyFrameStandar
         const buttonScale = 3;
 
         const buttonAnimations: KeyFrameAnimationConfig = new Map<string, IAnimationConfig>();
-        buttonAnimations.set("tap", [
+        buttonAnimations.set("pick", [
             {
                 propertyKey: ".scale",
                 steps: [

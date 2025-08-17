@@ -4,6 +4,7 @@ import { Sequence } from "../libs/controllers/Sequence";
 import { KeyFrameStandardMesh } from "../libs/gameObjects/KeyFrameStandardMesh";
 import { Signal } from "../libs/utils/Signal";
 import { AwaitCompleteStep, AwaitCompleteStepParams } from "./steps/general/AwaitCompleteStep";
+import { ReplayPickStep, ReplayPickStepParams } from "./steps/transitions/ReplayPickStep";
 import { ScreenFadeInStep, ScreenFadeInStepParams } from "./steps/transitions/ScreenFadeInStep";
 
 export interface IListeningUserInterfaceControllerParams extends IControllerParams {
@@ -33,6 +34,12 @@ export class ListeningUserInterfaceController extends Controller<IListeningUserI
         // // SECOND
         const hideGameSequence = new Sequence();
         // // Consequents
+        const replayPickStep = new ReplayPickStep(models);
+        const replayPickParams: ReplayPickStepParams = {
+            button: gameUI.replayButton
+        };
+        hideGameSequence.addConsequents(replayPickStep, replayPickParams);
+
         const showScreenStep = new ScreenFadeInStep(models);
         const showScreenParams: ScreenFadeInStepParams = {
             screen: gameUI.transitionScreen
