@@ -1,6 +1,6 @@
 {
   "name": "unbolt-game",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -13,7 +13,6 @@
     "bump": "npm version patch --no-git-tag-version",
     "deploy": "npm-run-all bump build publish",
     "publish": "gh-pages -d dist",
-
     "bump:commit": "npm version patch",
     "deploy:commit": "npm-run-all bump:commit build publish"
   },
