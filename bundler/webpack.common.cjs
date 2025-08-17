@@ -18,6 +18,7 @@ module.exports = {
                 patterns: [
                     {
                         from: path.resolve(__dirname, '../static'),
+                        to: '',
                         noErrorOnMissing: true
                     }
                 ]

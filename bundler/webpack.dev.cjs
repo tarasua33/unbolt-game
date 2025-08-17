@@ -12,6 +12,9 @@ module.exports = merge(commonConfiguration, {
     infrastructureLogging: {
         level: 'warn',
     },
+    output: {
+        publicPath: '/'
+    },
     devServer: {
         host: 'localhost',
         port: 3000,
