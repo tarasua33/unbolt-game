@@ -22,6 +22,8 @@ export class DragDispatcher {
 
     public startDispatch(): void {
         const renderer = this._renderer;
+        renderer.domElement.style.touchAction = 'none';
+        
         renderer.domElement.addEventListener('pointerdown', this._onStartDrag.bind(this));
 
         window.addEventListener('pointerup', this._onStoptDrag.bind(this));
