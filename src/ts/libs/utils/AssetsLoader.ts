@@ -42,27 +42,27 @@ export class AssetsLoader {
         const gltfLoader = this._gltfLoader;
         const textureLoader = this._textureLoader;
 
-        gltfLoader.load("/walls_window_door/scene.gltf",
+        gltfLoader.load("/assets/walls_window_door/scene.gltf",
             this._onHouseElementsLoaded.bind(this)
         );
 
-        textureLoader.load("/tile.jpg", (data: Texture) => {
+        textureLoader.load("/assets/tile.jpg", (data: Texture) => {
             this.assets.textures["tile"] = data;
         });
 
-        textureLoader.load("/bolt_body.jpg", (data: Texture) => {
+        textureLoader.load("/assets/bolt_body.jpg", (data: Texture) => {
             this.assets.textures["boltBody"] = data;
         });
 
-        textureLoader.load("/bolt_head.jpg", (data: Texture) => {
+        textureLoader.load("/assets/bolt_head.jpg", (data: Texture) => {
             this.assets.textures["boltHead"] = data;
         });
 
-        textureLoader.load("/chest.png", (data: Texture) => {
+        textureLoader.load("/assets/chest.png", (data: Texture) => {
             this.assets.textures["chest"] = data;
         });
 
-        textureLoader.load("/replay.png", (data: Texture) => {
+        textureLoader.load("/assets/replay.png", (data: Texture) => {
             this.assets.textures["replay"] = data;
         });
     }
