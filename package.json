@@ -7,13 +7,15 @@
   "scripts": {
     "start": "DEPLOY_ROOT='' webpack serve --config ./bundler/webpack.dev.cjs",
     "build": "DEPLOY_ROOT='/unbolt-game' webpack --config ./bundler/webpack.prod.cjs",
-
     "test": "echo \"Error: no test specified\" && exit 1",
-
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    
-    "deploy": "gh-pages -d dist"
+    "bump": "npm version patch --no-git-tag-version",
+    "deploy": "npm-run-all bump build publish",
+    "publish": "gh-pages -d dist",
+
+    "bump:commit": "npm version patch",
+    "deploy:commit": "npm-run-all bump:commit build publish"
   },
   "keywords": [],
   "author": "",
@@ -40,6 +42,7 @@
     "ip": "^2.0.1",
     "lil-gui": "^0.20.0",
     "mini-css-extract-plugin": "^2.9.3",
+    "npm-run-all": "^4.1.5",
     "portfinder-sync": "^0.0.2",
     "raw-loader": "^4.0.2",
     "stats.js": "^0.17.0",
