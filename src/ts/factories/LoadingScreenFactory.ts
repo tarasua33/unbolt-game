@@ -23,11 +23,11 @@ export class LoadingScreenFactory {
             uniform float progress;
             varying vec2 vUv;
             void main() {
-                gl_FragColor = vec4(1.0 - progress, 0.0 + progress, 0.0, 1.0);
+                gl_FragColor = vec4(1.0 - pow(progress, 2.0), 0.0 + pow(progress, 2.0), 0.0, 1.0);
             }
         `
 
-        const progressBarGeometry = new PlaneGeometry(2, 0.15);
+        const progressBarGeometry = new PlaneGeometry(1.2, 0.12);
         progressBarGeometry.translate(1, 0, 0)
         const screenConfig: LoadingScreenConfig = {
             bgConfig: {
