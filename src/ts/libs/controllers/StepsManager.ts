@@ -122,6 +122,7 @@ export class StepsManager {
         this._permanentsSteps = [];
 
         for (const step of this._dynamicSteps) {
+            step.completeStepSignal.removeAll();
             step.forceComplete();
         }
         this._dynamicSteps.clear();
@@ -133,10 +134,12 @@ export class StepsManager {
         this._isForceComplete = true;
 
         for (const step of this._consequentsSteps) {
+            step.step.completeStepSignal.removeAll();
             step.step.forceComplete();
         }
 
         for (const step of this._permanentsSteps) {
+            step.step.completeStepSignal.removeAll();
             step.step.forceComplete();
         }
 
