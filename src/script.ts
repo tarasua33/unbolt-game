@@ -3,24 +3,25 @@ import { Game } from "./ts/Game";
 import Stats from 'stats.js';
 import { injectAll } from './ts/libs/utils/Injections';
 
+((): void => {
+    injectAll();
+    const game = new Game('.canvas');
 
-injectAll();
-const game = new Game('.canvas');
+    const stats = new Stats();
+    stats.showPanel(0);
+    document.body.appendChild(stats.dom);
 
-const stats = new Stats();
-stats.showPanel(0);
-document.body.appendChild(stats.dom);
+    function tick(): void {
+        stats.begin();
+        game.update();
+        stats.end();
 
-function tick(): void {
-    stats.begin();
-    game.update();
-    stats.end();
+        window.requestAnimationFrame(tick);
+    };
 
-    window.requestAnimationFrame(tick);
-};
+    tick();
 
-tick();
-
-window.addEventListener('resize', () => {
-    game.resize()
-});
+    window.addEventListener('resize', () => {
+        game.resize()
+    });
+})()
