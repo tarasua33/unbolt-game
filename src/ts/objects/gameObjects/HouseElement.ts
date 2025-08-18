@@ -20,7 +20,7 @@ export interface HouseElementConfig extends StandardGroupConfig {
 
 const MIN_GRAVITY_Y = -40;
 const BASE_MASS = 10;
-const DRAG_FORCE = 30;
+const DRAG_FORCE = 100;
 
 export class HouseElement extends StandardGroup<HouseElementConfig> {
     private _groupBody!: Body;
