@@ -20,7 +20,7 @@ export interface HouseElementConfig extends StandardGroupConfig {
 
 const MIN_GRAVITY_Y = -40;
 const BASE_MASS = 10;
-const MAX_DRAG_VELOCITY = 4;
+const DRAG_FORCE = 30;
 
 export class HouseElement extends StandardGroup<HouseElementConfig> {
     private _groupBody!: Body;
@@ -116,22 +116,20 @@ export class HouseElement extends StandardGroup<HouseElementConfig> {
         body.updateMassProperties();
     }
 
-    public addDragVelocity(): void {
-        if (this._groupBody.mass > 0) {
+    public addDragVelocity(deltaRotY: number): void {
+        if (this._groupBody.mass > 0 && Math.abs(this.position.x) < 3 && Math.abs(this.position.z) < 3) {
             const body = this._groupBody;
+            const { x, z } = body.position;
 
-            const { x, z } = this.position;
+            const radiusForceVec = new Vec3(x, 0, z);
+            radiusForceVec.normalize();
+            const mod = Math.sqrt(x**2 + z**2);
+            const rotForce = body.mass * deltaRotY**2 * mod * DRAG_FORCE;
+            // radiusForceVec.scale(rotForce * DRAG_FORCE);
 
-            if (Math.abs(x) > Math.abs(z)) {
-                const multiplier = x < 0 ? -1 : 1;
-                const abs = Math.min(Math.abs(x), MAX_DRAG_VELOCITY)
-                body.velocity.set(abs * multiplier, 0, body.velocity.z);
-            }
-            else {
-                const multiplier = z < 0 ? -1 : 1;
-                const abs = Math.min(Math.abs(z), MAX_DRAG_VELOCITY)
-                body.velocity.set(body.velocity.x, 0, multiplier * abs);
-            }
+            body.applyForce(
+                new Vec3(radiusForceVec.x * rotForce, radiusForceVec.y * rotForce, radiusForceVec.z * rotForce),
+                body.position);
         }
     }
 

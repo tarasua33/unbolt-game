@@ -12,6 +12,7 @@ export default [
       globals: globals.browser,
     },
     ...js.configs.recommended,
+    ignores: ["dist/**", "node_modules/**", "bundler/**"]
   },
 
   // TypeScript
